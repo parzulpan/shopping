@@ -1,2 +1,5 @@
 # shopping
-shopping - Enterprise-level open source projects.
+
+A shopping application template.
+
+## license
