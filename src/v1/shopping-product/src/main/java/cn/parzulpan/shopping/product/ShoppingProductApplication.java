@@ -3,6 +3,7 @@ package cn.parzulpan.shopping.product;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * 1. 整合 MyBatis-Plus
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *       1.2.1.2 在配置文件 配置映射文件地址
  */
 
+@EnableDiscoveryClient
 @MapperScan("cn.parzulpan.shopping.product.dao")
 @SpringBootApplication
 public class ShoppingProductApplication {

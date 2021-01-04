@@ -5,6 +5,8 @@ import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,11 +27,36 @@ import cn.parzulpan.common.utils.R;
  * @email parzulpan@gmail.com
  * @date 2021-01-04 20:44:19
  */
+@RefreshScope // 动态的从配置中心获取
 @RestController
 @RequestMapping("coupon/coupon")
 public class CouponController {
     @Autowired
     private CouponService couponService;
+
+    @Value("${coupon.user.name}")
+    private String name;
+
+    @Value("${coupon.user.age}")
+    private Integer age;
+
+    /**
+     * 从配置中心获取值
+     */
+    @RequestMapping("/getConfigTest")
+    public R getConfigTest() {
+        return R.ok().put("coupon.user.name", name).put("coupon.user.age", age);
+    }
+
+    /**
+     * 返回用户所有的优惠券信息
+     */
+    @RequestMapping("/member/list")
+    public R memberCoupons() {
+        CouponEntity couponEntity = new CouponEntity();
+        couponEntity.setCouponName("满 100 减 20");
+        return R.ok().put("coupons", Arrays.asList(couponEntity));
+    }
 
     /**
      * 列表
