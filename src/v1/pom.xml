@@ -16,7 +16,9 @@
         <module>shopping-member</module>
         <module>shopping-order</module>
         <module>shopping-coupon</module>
+        <module>shopping-common</module>
         <module>renren-fast</module>
+        <module>renren-generator</module>
     </modules>
 
 </project>

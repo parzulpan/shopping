@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/renren-fast/renren-fast.iml" filepath="$PROJECT_DIR$/renren-fast/renren-fast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/renren-generator/renren-generator.iml" filepath="$PROJECT_DIR$/renren-generator/renren-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shopping-common/shopping-common.iml" filepath="$PROJECT_DIR$/shopping-common/shopping-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-coupon/shopping-coupon.iml" filepath="$PROJECT_DIR$/shopping-coupon/shopping-coupon.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-member/shopping-member.iml" filepath="$PROJECT_DIR$/shopping-member/shopping-member.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-order/shopping-order.iml" filepath="$PROJECT_DIR$/shopping-order/shopping-order.iml" />

@@ -188,7 +188,7 @@ create table oms_order
    comment_time         datetime comment '评价时间',
    modify_time          datetime comment '修改时间',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_order comment '订单';
 
@@ -218,7 +218,7 @@ create table oms_order_item
    gift_integration     int comment '赠送积分',
    gift_growth          int comment '赠送成长值',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_order_item comment '订单项信息';
 
@@ -234,7 +234,7 @@ create table oms_order_operate_history
    order_status         tinyint comment '订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】',
    note                 varchar(500) comment '备注',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_order_operate_history comment '订单操作历史记录';
 
@@ -272,7 +272,7 @@ create table oms_order_return_apply
    receive_phone        varchar(20) comment '收货电话',
    company_address      varchar(500) comment '公司收货地址',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_order_return_apply comment '订单退货申请';
 
@@ -287,7 +287,7 @@ create table oms_order_return_reason
    status               tinyint(1) comment '启用状态',
    create_time          datetime comment 'create_time',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_order_return_reason comment '退货原因';
 
@@ -304,7 +304,7 @@ create table oms_order_setting
    comment_overtime     int comment '订单完成后自动好评时间（天）',
    member_level         tinyint(2) comment '会员等级【0-不限会员等级，全部通用；其他-对应的其他会员等级】',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_order_setting comment '订单配置信息';
 
@@ -325,7 +325,7 @@ create table oms_payment_info
    callback_content     varchar(4000) comment '回调内容',
    callback_time        datetime comment '回调时间',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_payment_info comment '支付信息表';
 
@@ -342,7 +342,7 @@ create table oms_refund_info
    refund_channel       tinyint comment '退款渠道[1-支付宝，2-微信，3-银联，4-汇款]',
    refund_content       varchar(5000),
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table oms_refund_info comment '退款信息';
 
@@ -365,7 +365,7 @@ create table pms_attr
    catelog_id           bigint comment '所属分类',
    show_desc            tinyint comment '快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整',
    primary key (attr_id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_attr comment '商品属性';
 
@@ -379,7 +379,7 @@ create table pms_attr_attrgroup_relation
    attr_group_id        bigint comment '属性分组id',
    attr_sort            int comment '属性组内排序',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_attr_attrgroup_relation comment '属性&属性分组关联';
 
@@ -395,7 +395,7 @@ create table pms_attr_group
    icon                 varchar(255) comment '组图标',
    catelog_id           bigint comment '所属分类id',
    primary key (attr_group_id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_attr_group comment '属性分组';
 
@@ -412,7 +412,7 @@ create table pms_brand
    first_letter         char(1) comment '检索首字母',
    sort                 int comment '排序',
    primary key (brand_id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_brand comment '品牌';
 
@@ -431,7 +431,7 @@ create table pms_category
    product_unit         char(50) comment '计量单位',
    product_count        int comment '商品数量',
    primary key (cat_id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_category comment '商品三级分类';
 
@@ -444,7 +444,7 @@ create table pms_comment_replay
    comment_id           bigint comment '评论id',
    reply_id             bigint comment '回复id',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_comment_replay comment '商品评价回复关系';
 
@@ -461,7 +461,7 @@ create table pms_product_attr_value
    attr_sort            int comment '顺序',
    quick_show           tinyint comment '快速展示【是否展示在介绍上；0-否 1-是】',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_product_attr_value comment 'spu属性值';
 
@@ -476,7 +476,7 @@ create table pms_sku_images
    img_sort             int comment '排序',
    default_img          int comment '默认图[0 - 不是默认图，1 - 是默认图]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_sku_images comment 'sku图片';
 
@@ -497,7 +497,7 @@ create table pms_sku_info
    price                decimal(18,4) comment '价格',
    sale_count           bigint comment '销量',
    primary key (sku_id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_sku_info comment 'sku信息';
 
@@ -513,7 +513,7 @@ create table pms_sku_sale_attr_value
    attr_value           varchar(200) comment '销售属性值',
    attr_sort            int comment '顺序',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_sku_sale_attr_value comment 'sku销售属性&值';
 
@@ -539,7 +539,7 @@ create table pms_spu_comment
    member_icon          varchar(255) comment '用户头像',
    comment_type         tinyint comment '评论类型[0 - 对商品的直接评论，1 - 对评论的回复]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_spu_comment comment '商品评价';
 
@@ -555,7 +555,7 @@ create table pms_spu_images
    img_sort             int comment '顺序',
    default_img          tinyint comment '是否默认图',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_spu_images comment 'spu图片';
 
@@ -574,7 +574,7 @@ create table pms_spu_info
    create_time          datetime,
    update_time          datetime,
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_spu_info comment 'spu信息';
 
@@ -586,7 +586,7 @@ create table pms_spu_info_desc
    spu_id               bigint not null comment '商品id',
    decript              longtext comment '商品介绍',
    primary key (spu_id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table pms_spu_info_desc comment 'spu信息介绍';
 
@@ -605,7 +605,7 @@ create table sms_category_bounds
    buy_bounds           decimal(18,4) comment '购物积分',
    work                 tinyint(1) comment '优惠生效情况[1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_category_bounds comment '商品分类积分设置';
 
@@ -635,7 +635,7 @@ create table sms_coupon
    member_level         tinyint(1) comment '可以领取的会员等级[0->不限等级，其他-对应等级]',
    publish              tinyint(1) comment '发布状态[0-未发布，1-已发布]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_coupon comment '优惠券信息';
 
@@ -655,7 +655,7 @@ create table sms_coupon_history
    order_id             bigint comment '订单id',
    order_sn             bigint comment '订单号',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_coupon_history comment '优惠券领取历史记录';
 
@@ -669,7 +669,7 @@ create table sms_coupon_spu_category_relation
    category_id          bigint comment '产品分类id',
    category_name        varchar(64) comment '产品分类名称',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_coupon_spu_category_relation comment '优惠券分类关联';
 
@@ -683,7 +683,7 @@ create table sms_coupon_spu_relation
    spu_id               bigint comment 'spu_id',
    spu_name             varchar(255) comment 'spu_name',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_coupon_spu_relation comment '优惠券与产品关联';
 
@@ -705,7 +705,7 @@ create table sms_home_adv
    publisher_id         bigint comment '发布者',
    auth_id              bigint comment '审核者',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_home_adv comment '首页轮播广告';
 
@@ -723,7 +723,7 @@ create table sms_home_subject
    sort                 int comment '排序',
    img                  varchar(500) comment '专题图片地址',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_home_subject comment '首页专题表【jd首页下面很多专题，每个专题链接新的页面，展示专题商品信息】';
 
@@ -738,7 +738,7 @@ create table sms_home_subject_spu
    spu_id               bigint comment 'spu_id',
    sort                 int comment '排序',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_home_subject_spu comment '专题商品';
 
@@ -754,7 +754,7 @@ create table sms_member_price
    member_price         decimal(18,4) comment '会员对应价格',
    add_other            tinyint(1) comment '可否叠加其他优惠[0-不可叠加优惠，1-可叠加]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_member_price comment '商品会员价格';
 
@@ -771,7 +771,7 @@ create table sms_seckill_promotion
    create_time          datetime comment '创建时间',
    user_id              bigint comment '创建人',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_seckill_promotion comment '秒杀活动';
 
@@ -787,7 +787,7 @@ create table sms_seckill_session
    status               tinyint(1) comment '启用状态',
    create_time          datetime comment '创建时间',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_seckill_session comment '秒杀活动场次';
 
@@ -804,7 +804,7 @@ create table sms_seckill_sku_notice
    send_time            datetime comment '发送时间',
    notice_type          tinyint(1) comment '通知方式[0-短信，1-邮件]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_seckill_sku_notice comment '秒杀商品通知订阅';
 
@@ -822,7 +822,7 @@ create table sms_seckill_sku_relation
    seckill_limit        decimal comment '每人限购数量',
    seckill_sort         int comment '排序',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_seckill_sku_relation comment '秒杀活动商品关联';
 
@@ -837,7 +837,7 @@ create table sms_sku_bounds
    buy_bounds           decimal(18,4) comment '购物积分',
    work                 tinyint(1) comment '优惠生效情况[1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_sku_bounds comment '商品sku积分设置';
 
@@ -852,7 +852,7 @@ create table sms_sku_full_reduction
    reduce_price         decimal(18,4) comment '减多少',
    add_other            tinyint(1) comment '是否参与其他优惠',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_sku_full_reduction comment '商品满减信息';
 
@@ -868,7 +868,7 @@ create table sms_sku_ladder
    price                decimal(18,4) comment '折后价',
    add_other            tinyint(1) comment '是否叠加其他优惠[0-不可叠加，1-可叠加]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_sku_ladder comment '商品阶梯价格';
 
@@ -883,7 +883,7 @@ create table sms_spu_bounds
    buy_bounds           decimal(18,4) comment '购物积分',
    work                 tinyint(1) comment '优惠生效情况[1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table sms_spu_bounds comment '商品spu积分设置';
 
@@ -903,7 +903,7 @@ create table ums_growth_change_history
    note                 varchar(0) comment '备注',
    source_type          tinyint comment '积分来源[0-购物，1-管理员修改]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
 alter table ums_growth_change_history comment '成长值变化历史记录';
@@ -920,7 +920,7 @@ create table ums_integration_change_history
    note                 varchar(255) comment '备注',
    source_tyoe          tinyint comment '来源[0->购物；1->管理员修改;2->活动]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_integration_change_history comment '积分变化历史记录';
 
@@ -948,7 +948,7 @@ create table ums_member
    status               tinyint comment '启用状态',
    create_time          datetime comment '注册时间',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member comment '会员';
 
@@ -964,7 +964,7 @@ create table ums_member_collect_spu
    spu_img              varchar(500) comment 'spu_img',
    create_time          datetime comment 'create_time',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member_collect_spu comment '会员收藏的商品';
 
@@ -979,7 +979,7 @@ create table ums_member_collect_subject
    subject_img          varchar(500) comment 'subject_img',
    subject_urll         varchar(500) comment '活动url',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member_collect_subject comment '会员收藏的专题活动';
 
@@ -999,7 +999,7 @@ create table ums_member_level
    priviledge_birthday  tinyint comment '是否有生日特权',
    note                 varchar(255) comment '备注',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member_level comment '会员等级';
 
@@ -1015,7 +1015,7 @@ create table ums_member_login_log
    city                 varchar(64) comment 'city',
    login_type           tinyint(1) comment '登录类型[1-web，2-app]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member_login_log comment '会员登录记录';
 
@@ -1036,7 +1036,7 @@ create table ums_member_receive_address
    areacode             varchar(15) comment '省市区代码',
    default_status       tinyint(1) comment '是否默认',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member_receive_address comment '会员收货地址';
 
@@ -1061,7 +1061,7 @@ create table ums_member_statistics_info
    collect_comment_count int comment '收藏的评论数量',
    invite_friend_count  int comment '邀请的朋友数量',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table ums_member_statistics_info comment '会员统计信息';
 
@@ -1085,7 +1085,7 @@ create table wms_purchase
    create_time          datetime,
    update_time          datetime,
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table wms_purchase comment '采购信息';
 
@@ -1102,7 +1102,7 @@ create table wms_purchase_detail
    ware_id              bigint comment '仓库id',
    status               int comment '状态[0新建，1已分配，2正在采购，3已完成，4采购失败]',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*==============================================================*/
 /* Table: wms_ware_info                                         */
@@ -1114,7 +1114,7 @@ create table wms_ware_info
    address              varchar(255) comment '仓库地址',
    areacode             varchar(20) comment '区域编码',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table wms_ware_info comment '仓库信息';
 
@@ -1138,7 +1138,7 @@ create table wms_ware_order_task
    ware_id              bigint comment '仓库id',
    task_comment         varchar(500) comment '工作单备注',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table wms_ware_order_task comment '库存工作单';
 
@@ -1153,7 +1153,7 @@ create table wms_ware_order_task_detail
    sku_num              int comment '购买个数',
    task_id              bigint comment '工作单id',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table wms_ware_order_task_detail comment '库存工作单';
 
@@ -1169,6 +1169,6 @@ create table wms_ware_sku
    sku_name             varchar(200) comment 'sku_name',
    stock_locked         int comment '锁定库存',
    primary key (id)
-);
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
 
 alter table wms_ware_sku comment '商品库存';
