@@ -3,6 +3,8 @@ package cn.parzulpan.shopping.coupon;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 /**
  * 1、如何使用Nacos作为配置中心统一管理配置
@@ -12,10 +14,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *             <groupId>com.alibaba.cloud</groupId>
  *             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
  *         </dependency>
- * 2）、创建一个bootstrap.yml。
- *      spring.application.name=gulimall-coupon
+ * 2）、创建一个bootstrap.properties。
+ *      spring.application.name=shopping-coupon-config
+ *      spring.cloud.nacos.config.name=shopping-coupon-config
+ *      spring.cloud.nacos.config.group=DEFAULT_GROUP
  *      spring.cloud.nacos.config.server-addr=127.0.0.1:8848
- * 3）、需要给配置中心默认添加一个叫 数据集（Data Id）gulimall-coupon.properties。默认规则，应用名.properties
+ * 3）、需要给配置中心默认添加一个叫 数据集（Data Id）shopping-coupon-config.properties。默认规则，应用名.properties
  * 4）、给 应用名.properties 添加任何配置
  * 5）、动态获取配置。
  *      @RefreshScope：动态获取并刷新配置
@@ -44,7 +48,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * 3、同时加载多个配置集
  * 1)、微服务任何配置信息，任何配置文件都可以放在配置中心中
  * 2）、只需要在bootstrap.properties说明加载配置中心中哪些配置文件即可
- * 3）、@Value，@ConfigurationProperties。。。
+ * 3）、@Value，@ConfigurationProperties
  * 以前SpringBoot任何方法从配置文件中获取值，都能使用。
  * 配置中心有的优先使用配置中心中的，
  */

@@ -1,19 +1,21 @@
-spring:
-  datasource:
-    username: root
-    password: root
-    url: jdbc:mysql://192.168.2.22:3306/shopping_sms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
-  application:
-    name: shopping-coupon # 当前服务的名字
-mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*:xml  # 配置映射文件地址
-  global-config:
-    db-config:
-      id-type: auto # 配置主键自增
-server:
-  port: 7000
+##debug: true
+#spring:
+#  datasource:
+#    username: root
+#    password: root
+#    url: jdbc:mysql://192.168.2.22:3306/shopping_sms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
+#  application:
+#    name: shopping-coupon # 当前服务的名字
+#mybatis-plus:
+#  mapper-locations: classpath:/mapper/**/*:xml  # 配置映射文件地址
+#  global-config:
+#    db-config:
+#      id-type: auto # 配置主键自增
+#server:
+#  port: 7000
+# 以上配置被 Nacos 配置中心管理
