@@ -24,6 +24,7 @@
         <module>shopping-order</module>
         <module>shopping-coupon</module>
         <module>shopping-common</module>
+        <module>shopping-getway</module>
         <module>renren-fast</module>
         <module>renren-generator</module>
     </modules>

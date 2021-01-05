@@ -1,0 +1,22 @@
+# 以下配置可被 Nacos 配置中心管理
+
+#debug: true
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
+    gateway:
+      routes: # 网关路由
+        - id: baidu_route
+          uri: https://www.baidu.com
+          predicates: # 查询路由 http://127.0.0.1:88/?uri=qq
+          - Query=uri, baidu
+        - id: qq_route
+          uri: https://www.qq.com
+          predicates: # 查询路由 http://127.0.0.1:88/?uri=baidu
+            - Query=uri, qq
+  application:
+    name: shopping-getway # 当前服务的名字
+server:
+  port: 88
