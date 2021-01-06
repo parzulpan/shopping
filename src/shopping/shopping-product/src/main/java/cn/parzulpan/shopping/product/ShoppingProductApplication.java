@@ -15,6 +15,11 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *     1.2.2 配置 MyBatis-Plus
  *       1.2.2.1 使用 @MapperScan 扫描 DAO
  *       1.2.1.2 在配置文件 配置映射文件地址
+ *
+ * 2. 逻辑删除
+ *   2.1 配置全局的逻辑删除规则（可省略）
+ *   2.2 配置逻辑删除的组件 Bean（可省略）
+ *   2.3 给实体类字段加上 @TableLogic
  */
 
 @EnableDiscoveryClient

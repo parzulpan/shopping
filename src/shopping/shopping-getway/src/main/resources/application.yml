@@ -11,11 +11,26 @@ spring:
         - id: baidu_route
           uri: https://www.baidu.com
           predicates: # 查询路由 http://127.0.0.1:88/?uri=qq
-          - Query=uri, baidu
+            - Query=uri, baidu
+
         - id: qq_route
           uri: https://www.qq.com
           predicates: # 查询路由 http://127.0.0.1:88/?uri=baidu
             - Query=uri, qq
+
+        - id: product_route
+          uri: lb://shopping-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment} # http://localhost:88/api/product/category/list/tree => http://localhost:10000/product/category/list/tree
+
+        - id: admin_route
+          uri: lb://renren-fast # 负载均衡
+          predicates:
+            - Path=/api/**  # 前端项目 /api
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment} # http://localhost:88/api/captcha.jpg => http://localhost:8080/renren-fast/captcha.jpg
   application:
     name: shopping-getway # 当前服务的名字
 server:
