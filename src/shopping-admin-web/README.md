@@ -1,6 +1,6 @@
 # shopping-admin-web
 
-> shopping admin web.
+> A Vue.js project
 
 ## Build Setup
 
