@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>shopping-common</artifactId>
-    <description>所有微服务模块的公共依赖，实体类，工具类等</description>
+    <description>所有微服务模块的公共依赖、实体类、工具类等</description>
 
     <properties>
         <java.version>1.8</java.version>

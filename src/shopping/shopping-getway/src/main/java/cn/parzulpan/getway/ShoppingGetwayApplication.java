@@ -10,6 +10,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *
  * 1. 开启服务注册发现
  *    可以排除数据源的配置
+ * @author parzulpan
  */
 
 @EnableDiscoveryClient

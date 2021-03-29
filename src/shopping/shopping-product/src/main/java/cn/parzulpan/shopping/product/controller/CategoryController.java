@@ -43,7 +43,6 @@ public class CategoryController {
         return R.ok().put("data", entities);
     }
 
-
     /**
      * 信息
      */
@@ -52,7 +51,7 @@ public class CategoryController {
     public R info(@PathVariable("catId") Long catId){
 		CategoryEntity category = categoryService.getById(catId);
 
-        return R.ok().put("category", category);
+        return R.ok().put("data", category);
     }
 
     /**
@@ -78,6 +77,17 @@ public class CategoryController {
     }
 
     /**
+     * 批量修改
+     */
+    @RequestMapping("/update/sort")
+    // @RequiresPermissions("product:category:update")
+    public R updateSort(@RequestBody CategoryEntity[] category){
+        categoryService.updateBatchById(Arrays.asList(category));
+
+        return R.ok();
+    }
+
+    /**
      * 删除
      * @RequestBody 获取请求体，必须发送 POST 请求
      * SpringMVC 自动将请求体的数据（json），转为对应的对象
@@ -85,8 +95,7 @@ public class CategoryController {
     @RequestMapping("/delete")
     // @RequiresPermissions("product:category:delete")
     public R delete(@RequestBody Long[] catIds){
-//		categoryService.removeByIds(Arrays.asList(catIds));
-
+        // categoryService.removeByIds(Arrays.asList(catIds));
 		categoryService.removeMenuByIds(Arrays.asList(catIds));
 
         return R.ok();

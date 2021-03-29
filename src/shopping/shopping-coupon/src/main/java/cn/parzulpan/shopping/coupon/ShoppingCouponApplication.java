@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Bean;
  * 3）、需要给配置中心默认添加一个叫 数据集（Data Id）shopping-coupon-config.properties。默认规则，应用名.properties
  * 4）、给 应用名.properties 添加任何配置
  * 5）、动态获取配置。
+ *
  *      @RefreshScope：动态获取并刷新配置
  *      @Value("${配置项的名}")：获取到配置。
  *      如果配置中心和当前应用的配置文件中都配置了相同的项，优先使用配置中心的配置。

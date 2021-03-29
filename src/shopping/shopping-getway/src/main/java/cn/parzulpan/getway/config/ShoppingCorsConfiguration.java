@@ -26,7 +26,8 @@ public class ShoppingCorsConfiguration {
         corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.setAllowCredentials(true);
 
-        source.registerCorsConfiguration("/**", corsConfiguration);    // 任意路径都进行跨域配置
+        // 任意路径都进行跨域配置
+        source.registerCorsConfiguration("/**", corsConfiguration);
 
         return new CorsWebFilter(source);
     }

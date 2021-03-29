@@ -19,8 +19,6 @@ import cn.parzulpan.shopping.coupon.service.CouponService;
 import cn.parzulpan.common.utils.PageUtils;
 import cn.parzulpan.common.utils.R;
 
-
-
 /**
  * 优惠券信息
  *
@@ -28,6 +26,7 @@ import cn.parzulpan.common.utils.R;
  * @email parzulpan@gmail.com
  * @date 2021-01-04 20:44:19
  */
+
 @RefreshScope // 动态的从配置中心获取
 @RestController
 @RequestMapping("coupon/coupon")

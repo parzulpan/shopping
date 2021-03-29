@@ -18,8 +18,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *
  * 2. 逻辑删除
  *   2.1 配置全局的逻辑删除规则（可省略）
- *   2.2 配置逻辑删除的组件 Bean（可省略）
+ *   2.2 配置逻辑删除的组件 Bean（3.1.1以上的高版本可省略）
  *   2.3 给实体类字段加上 @TableLogic
+ * @author parzulpan
  */
 
 @EnableDiscoveryClient
