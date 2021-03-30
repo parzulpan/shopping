@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="shopping-third-party" />
         <module name="shopping-ware" />
         <module name="shopping-member" />
         <module name="shopping-coupon" />
@@ -28,6 +29,7 @@
       <module name="shopping-member" target="1.8" />
       <module name="shopping-order" target="1.8" />
       <module name="shopping-product" target="1.8" />
+      <module name="shopping-third-party" target="1.8" />
       <module name="shopping-ware" target="1.8" />
     </bytecodeTargetLevel>
   </component>
@@ -40,6 +42,7 @@
       <module name="shopping-member" options="-parameters" />
       <module name="shopping-order" options="-parameters" />
       <module name="shopping-product" options="-parameters" />
+      <module name="shopping-third-party" options="-parameters" />
       <module name="shopping-ware" options="-parameters" />
     </option>
   </component>

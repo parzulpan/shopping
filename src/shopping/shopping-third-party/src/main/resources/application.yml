@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
+  application:
+    name: shopping-third-party # 当前服务的名字
+server:
+  port: 30000
