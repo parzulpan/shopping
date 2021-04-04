@@ -2,6 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/renren-fast/db/mysql.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/shopping-product/src/main/resources/mapper/product/AttrAttrgroupRelationDao.xml" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/sql/mysql-pms-category.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/sql/mysql-schema.sql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/sql/mysql-sys-menus.sql" dialect="MySQL" />

@@ -50,7 +50,7 @@ public class ShoppingExceptionControllerAdvice {
      */
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable throwable) {
-        log.error("未知异常 {}， 异常类型{} ", throwable.getMessage(), throwable.getClass());
+        log.error("未知异常 {}， 异常类型 {} ", throwable.getMessage(), throwable.getClass());
         return R.error(BizCodeEnum.UNKNOWN_EXCEPTION.getCode(), BizCodeEnum.UNKNOWN_EXCEPTION.getMsg());
     }
 }

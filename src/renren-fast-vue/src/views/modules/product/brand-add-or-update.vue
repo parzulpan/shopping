@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.brandId ? '新增' : '修改'"
+    :title="!dataForm.id ? '新增' : '修改'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -14,8 +14,8 @@
       <el-form-item label="品牌名" prop="name">
         <el-input v-model="dataForm.name" placeholder="品牌名"></el-input>
       </el-form-item>
-      <el-form-item label="品牌 logo" prop="logo">
-        <!-- <el-input v-model="dataForm.logo" placeholder="品牌 logo"></el-input> -->
+      <el-form-item label="品牌logo地址" prop="logo">
+        <!-- <el-input v-model="dataForm.logo" placeholder="品牌logo地址"></el-input> -->
         <single-upload v-model="dataForm.logo"></single-upload>
       </el-form-item>
       <el-form-item label="介绍" prop="descript">
@@ -25,17 +25,13 @@
         <el-switch
           v-model="dataForm.showStatus"
           active-color="#13ce66"
-          inactive-color="#4f4f4f"
+          inactive-color="#ff4949"
           :active-value="1"
           :inactive-value="0"
-        >
-        </el-switch>
+        ></el-switch>
       </el-form-item>
       <el-form-item label="检索首字母" prop="firstLetter">
-        <el-input
-          v-model="dataForm.firstLetter"
-          placeholder="检索首字母"
-        ></el-input>
+        <el-input v-model="dataForm.firstLetter" placeholder="检索首字母"></el-input>
       </el-form-item>
       <el-form-item label="排序" prop="sort">
         <el-input v-model.number="dataForm.sort" placeholder="排序"></el-input>
@@ -49,10 +45,9 @@
 </template>
 
 <script>
-// import SingleUpload from "@/components/upload/singleUpload.vue";
-import singleUpload from "../../../components/upload/singleUpload.vue";
+import SingleUpload from "@/components/upload/singleUpload";
 export default {
-  components: { singleUpload },
+  components: { SingleUpload },
   data() {
     return {
       visible: false,
@@ -63,18 +58,22 @@ export default {
         descript: "",
         showStatus: 1,
         firstLetter: "",
-        sort: 0,
+        sort: 0
       },
       dataRule: {
         name: [{ required: true, message: "品牌名不能为空", trigger: "blur" }],
         logo: [
-          { required: true, message: "品牌 logo 不能为空", trigger: "blur" },
+          { required: true, message: "品牌logo地址不能为空", trigger: "blur" }
         ],
         descript: [
-          { required: true, message: "介绍不能为空", trigger: "blur" },
+          { required: true, message: "介绍不能为空", trigger: "blur" }
         ],
         showStatus: [
-          { required: true, message: "显示状态不能为空", trigger: "blur" },
+          {
+            required: true,
+            message: "显示状态[0-不显示；1-显示]不能为空",
+            trigger: "blur"
+          }
         ],
         firstLetter: [
           {
@@ -82,29 +81,29 @@ export default {
               if (value == "") {
                 callback(new Error("首字母必须填写"));
               } else if (!/^[a-zA-Z]$/.test(value)) {
-                callback(new Error("首字母必须是一个英文字母"));
+                callback(new Error("首字母必须a-z或者A-Z之间"));
               } else {
                 callback();
               }
             },
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         sort: [
           {
             validator: (rule, value, callback) => {
-              if (value == "" && value != 0) {
-                callback(new Error("排序必须填写"));
-              } else if (!Number.isInteger(value) || value < 0) {
-                callback(new Error("排序必须是一个大于等于 0 的整数"));
+              if (value == "") {
+                callback(new Error("排序字段必须填写"));
+              } else if (!Number.isInteger(value) || value<0) {
+                callback(new Error("排序必须是一个大于等于0的整数"));
               } else {
                 callback();
               }
             },
-            trigger: "blur",
-          },
-        ],
-      },
+            trigger: "blur"
+          }
+        ]
+      }
     };
   },
   methods: {
@@ -119,7 +118,7 @@ export default {
               `/product/brand/info/${this.dataForm.brandId}`
             ),
             method: "get",
-            params: this.$http.adornParams(),
+            params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.dataForm.name = data.brand.name;
@@ -135,7 +134,7 @@ export default {
     },
     // 表单提交
     dataFormSubmit() {
-      this.$refs["dataForm"].validate((valid) => {
+      this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(
@@ -149,8 +148,8 @@ export default {
               descript: this.dataForm.descript,
               showStatus: this.dataForm.showStatus,
               firstLetter: this.dataForm.firstLetter,
-              sort: this.dataForm.sort,
-            }),
+              sort: this.dataForm.sort
+            })
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
@@ -160,7 +159,7 @@ export default {
                 onClose: () => {
                   this.visible = false;
                   this.$emit("refreshDataList");
-                },
+                }
               });
             } else {
               this.$message.error(data.msg);
@@ -168,7 +167,7 @@ export default {
           });
         }
       });
-    },
-  },
+    }
+  }
 };
 </script>

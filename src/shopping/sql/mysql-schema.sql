@@ -436,6 +436,22 @@ create table pms_category
 alter table pms_category comment '商品三级分类';
 
 /*==============================================================*/
+/* Table: pms_category_brand_relation                           */
+/*==============================================================*/
+
+create table pms_category_brand_relation
+(
+    id                  bigint(20) not null auto_increment,
+    brand_id            bigint(20) null default null comment '品牌id',
+    catelog_id          bigint(20) null default null comment '分类id',
+    brand_name          varchar(255) null default null comment '品牌名',
+    catelog_name        varchar(255) null default null comment '分类名',
+    primary key (id)
+)Engine=InnoDB DEFAULT CHARSET=utf8mb4;
+
+alter table pms_category_brand_relation comment '分类&品牌关联';
+
+/*==============================================================*/
 /* Table: pms_comment_replay                                    */
 /*==============================================================*/
 create table pms_comment_replay

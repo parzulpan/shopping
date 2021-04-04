@@ -10,7 +10,7 @@
       :rules="dataRule"
       ref="dataForm"
       @keyup.enter.native="dataFormSubmit()"
-      label-width="140px"
+      label-width="120px"
     >
       <el-form-item label="组名" prop="attrGroupName">
         <el-input
@@ -27,15 +27,11 @@
       <el-form-item label="组图标" prop="icon">
         <el-input v-model="dataForm.icon" placeholder="组图标"></el-input>
       </el-form-item>
-      <el-form-item label="所属分类 id" prop="catelogId">
-        <!-- <el-input v-model="dataForm.catelogId" placeholder="所属分类 id"></el-input> -->
-        <el-cascader
-          filterable
-          placeholder="试试搜索：手机"
-          v-model="dataForm.catelogPath"
-          :options="categorys"
-          :props="props"
-        ></el-cascader>
+      <el-form-item label="所属分类" prop="catelogId">
+        <!-- <el-input v-model="dataForm.catelogId" placeholder="所属分类id"></el-input> @change="handleChange" -->
+        <!-- <el-cascader filterable placeholder="试试搜索：手机" v-model="catelogPath" :options="categorys"  :props="props"></el-cascader> -->
+        <!-- :catelogPath="catelogPath"自定义绑定的属性，可以给子组件传值 -->
+        <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -46,23 +42,24 @@
 </template>
 
 <script>
+import CategoryCascader from "../common/category-cascader";
 export default {
   data() {
     return {
-      visible: false,
       props: {
         value: "catId",
         label: "name",
         children: "children",
       },
+      visible: false,
       categorys: [],
+      catelogPath: [],
       dataForm: {
         attrGroupId: 0,
         attrGroupName: "",
         sort: "",
         descript: "",
         icon: "",
-        catelogPath: [],
         catelogId: 0,
       },
       dataRule: {
@@ -75,26 +72,25 @@ export default {
         ],
         icon: [{ required: true, message: "组图标不能为空", trigger: "blur" }],
         catelogId: [
-          { required: true, message: "所属分类 id 不能为空", trigger: "blur" },
+          { required: true, message: "所属分类id不能为空", trigger: "blur" },
         ],
       },
     };
   },
+  components: { CategoryCascader },
+
   methods: {
     dialogClose() {
-      console.log("PPPP");
-      this.dataForm.catelogPath = [];
+      this.catelogPath = [];
     },
     getCategorys() {
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get",
-        params: this.$http.adornParams({}),
       }).then(({ data }) => {
         this.categorys = data.data;
       });
     },
-
     init(id) {
       this.dataForm.attrGroupId = id || 0;
       this.visible = true;
@@ -114,8 +110,8 @@ export default {
               this.dataForm.descript = data.attrGroup.descript;
               this.dataForm.icon = data.attrGroup.icon;
               this.dataForm.catelogId = data.attrGroup.catelogId;
-              // 查出 catelogId 的完整路径
-              this.dataForm.catelogPath = data.attrGroup.catelogPath;
+              //查出 catelogId 的完整路径
+              this.catelogPath = data.attrGroup.catelogPath;
             }
           });
         }
@@ -138,9 +134,7 @@ export default {
               sort: this.dataForm.sort,
               descript: this.dataForm.descript,
               icon: this.dataForm.icon,
-              catelogId: this.dataForm.catelogPath[
-                this.dataForm.catelogPath.length - 1
-              ],
+              catelogId: this.catelogPath[this.catelogPath.length - 1],
             }),
           }).then(({ data }) => {
             if (data && data.code === 0) {
@@ -161,7 +155,6 @@ export default {
       });
     },
   },
-
   created() {
     this.getCategorys();
   },

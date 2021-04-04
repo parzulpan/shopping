@@ -1,16 +1,16 @@
 package cn.parzulpan.shopping.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.parzulpan.shopping.product.entity.AttrEntity;
+import cn.parzulpan.shopping.product.service.AttrService;
 import cn.parzulpan.shopping.product.service.CategoryService;
+import cn.parzulpan.shopping.product.vo.AttrGroupRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import cn.parzulpan.shopping.product.entity.AttrGroupEntity;
 import cn.parzulpan.shopping.product.service.AttrGroupService;
@@ -34,6 +34,31 @@ public class AttrGroupController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private AttrService attrService;
+
+    /**
+     * 获取属性分组的关联的所有属性
+     * /product/attrgroup/{attrgroupId}/attr/relation
+     */
+    @GetMapping("/{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId) {
+        List<AttrEntity> entities = attrService.getRelationAttr(attrgroupId);
+        return R.ok().put("data", entities);
+    }
+
+    /**
+     * 获取属性分组没有关联的其他属性
+     * /product/attrgroup/{attrgroupId}/noattr/relation
+     */
+
+    @GetMapping("/product/attrgroup/{attrgroupId}/noattr/relation")
+    public R attrNoRelation(@PathVariable("attrgroupId") Long attrgroupId,
+                            @RequestParam Map<String, Object> params) {
+        PageUtils page = attrService.getNoRelationAttr(params, attrgroupId);
+        return R.ok().put("page", page);
+    }
 
     /**
      * 获取分类属性分组
@@ -82,6 +107,16 @@ public class AttrGroupController {
     public R update(@RequestBody AttrGroupEntity attrGroup){
 		attrGroupService.updateById(attrGroup);
 
+        return R.ok();
+    }
+
+    /**
+     * 删除属性与分组的关联关系
+     * /product/attrgroup/attr/relation/delete
+     */
+    @PostMapping("/attr/relation/delete")
+    public R deleteRelation(@RequestBody AttrGroupRelationVo[] vos) {
+        attrService.deleteRelation(vos);
         return R.ok();
     }
 
