@@ -19,3 +19,8 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值
 server:
   port: 10000
+
+# 开启 SQL 调试
+logging:
+  level:
+    cn.parzulpan.shopping: debug

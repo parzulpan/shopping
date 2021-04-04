@@ -1,3 +1,4 @@
+<!--商品系统-品牌管理-->
 <template>
   <div class="mod-config">
     <el-form
