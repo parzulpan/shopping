@@ -4,12 +4,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.parzulpan.shopping.product.vo.SpuSaveVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import cn.parzulpan.shopping.product.entity.SpuInfoEntity;
 import cn.parzulpan.shopping.product.service.SpuInfoService;
@@ -55,12 +52,12 @@ public class SpuInfoController {
     }
 
     /**
-     * 保存
+     * 保存，新增商品
      */
-    @RequestMapping("/save")
+    @PostMapping("/save")
     // @RequiresPermissions("product:spuinfo:save")
-    public R save(@RequestBody SpuInfoEntity spuInfo){
-		spuInfoService.save(spuInfo);
+    public R save(@RequestBody SpuSaveVo vo){
+        spuInfoService.saveSpuInfo(vo);
 
         return R.ok();
     }

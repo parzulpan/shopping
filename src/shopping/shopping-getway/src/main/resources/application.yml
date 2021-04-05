@@ -8,15 +8,15 @@ spring:
         server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
     gateway:
       routes: # 网关路由
-        - id: baidu_route
-          uri: https://www.baidu.com
-          predicates: # 查询路由 http://127.0.0.1:88/?uri=baidu
-            - Query=uri, baidu
-
-        - id: qq_route
-          uri: https://www.qq.com
-          predicates: # 查询路由 http://127.0.0.1:88/?uri=qq
-            - Query=uri, qq
+#        - id: baidu_route
+#          uri: https://www.baidu.com
+#          predicates: # 查询路由 http://127.0.0.1:88/?uri=baidu
+#            - Query=uri, baidu
+#
+#        - id: qq_route
+#          uri: https://www.qq.com
+#          predicates: # 查询路由 http://127.0.0.1:88/?uri=qq
+#            - Query=uri, qq
 
         - id: product_route
           uri: lb://shopping-product
@@ -31,6 +31,14 @@ spring:
             - Path=/api/thirdparty/**
           filters:
             - RewritePath=/api/thirdparty/(?<segment>.*), /$\{segment}
+
+        - id: member_route
+          uri: lb://shopping-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
 
         - id: admin_route
           uri: lb://renren-fast # 负载均衡
