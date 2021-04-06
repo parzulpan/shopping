@@ -1,9 +1,11 @@
 /**
   * Copyright 2021 bejson.com 
   */
-package cn.parzulpan.shopping.product.vo;
+package cn.parzulpan.common.to;
 
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 /**
  * Auto-generated: 2021-04-05 22:39:55
@@ -12,9 +14,10 @@ import lombok.Data;
  * @website http://www.bejson.com/java2pojo/
  */
 @Data
-public class Images {
+public class MemberPrice {
 
-    private String imgUrl;
-    private int defaultImg;
+    private Long id;
+    private String name;
+    private BigDecimal price;
 
 }
