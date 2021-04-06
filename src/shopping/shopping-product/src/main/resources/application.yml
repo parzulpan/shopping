@@ -8,6 +8,9 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss # 指定日期格式化形式
+    time-zone: Asia/Shanghai
   application:
     name: shopping-product # 当前服务的名字
 mybatis-plus:
