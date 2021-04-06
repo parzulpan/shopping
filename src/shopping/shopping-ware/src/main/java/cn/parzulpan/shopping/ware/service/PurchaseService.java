@@ -1,9 +1,12 @@
 package cn.parzulpan.shopping.ware.service;
 
+import cn.parzulpan.shopping.ware.vo.MergeVo;
+import cn.parzulpan.shopping.ware.vo.PurchaseDoneVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.parzulpan.common.utils.PageUtils;
 import cn.parzulpan.shopping.ware.entity.PurchaseEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +19,13 @@ import java.util.Map;
 public interface PurchaseService extends IService<PurchaseEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryPageUnReceive(Map<String, Object> params);
+
+    void mergePurchase(MergeVo mergeVo);
+
+    void received(List<Long> ids);
+
+    void done(PurchaseDoneVo purchaseDoneVo);
 }
 

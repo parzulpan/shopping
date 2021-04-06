@@ -195,7 +195,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // status: 1
         String status = (String) params.get("status");
-        if (!StringUtils.isEmpty(status)) {
+        if (!StringUtils.isEmpty(status) && !"0".equalsIgnoreCase(status)) {
             wrapper.and((w) -> {
                 w.eq("publish_status", status);
             });
@@ -211,7 +211,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // brandId: 5
         String brandId = (String) params.get("brandId");
-        if (!StringUtils.isEmpty(brandId)) {
+        if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
             wrapper.and((w) -> {
                 w.eq("brand_id", brandId);
             });
@@ -219,7 +219,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         // catelogId: 225
         String catelogId = (String) params.get("catelogId");
-        if (!StringUtils.isEmpty(catelogId)) {
+        if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.and((w) -> {
                 w.eq("catalog_id", catelogId);
             });

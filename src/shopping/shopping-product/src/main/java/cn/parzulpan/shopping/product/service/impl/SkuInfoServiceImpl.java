@@ -48,26 +48,26 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
         // catelogId: 225
         String catelogId = (String) params.get("catelogId");
-        if (!StringUtils.isEmpty(catelogId)) {
+        if (!StringUtils.isEmpty(catelogId) && !"0".equalsIgnoreCase(catelogId)) {
             wrapper.eq("catalog_id", catelogId);
         }
 
         // brandId: 5
         String brandId = (String) params.get("brandId");
-        if (!StringUtils.isEmpty(catelogId)) {
+        if (!StringUtils.isEmpty(brandId) && !"0".equalsIgnoreCase(brandId)) {
             wrapper.eq("brand_id", brandId);
         }
 
         // min: 1000
         String min = (String) params.get("min");
-        if (!StringUtils.isEmpty(catelogId)) {
+        if (!StringUtils.isEmpty(min) && !"0".equalsIgnoreCase(min)) {
             // 大于等于
             wrapper.ge("price", min);
         }
 
         // max: 10000
         String max = (String) params.get("max");
-        if (!StringUtils.isEmpty(catelogId)) {
+        if (!StringUtils.isEmpty(max) && !"0".equalsIgnoreCase(max)) {
             try {
                 BigDecimal bigDecimal = new BigDecimal(max);
                 if (bigDecimal.compareTo(new BigDecimal("0")) == 1) {

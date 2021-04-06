@@ -1,9 +1,12 @@
 package cn.parzulpan.shopping.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 // import org.apache.shiro.authz.annotation.RequiresPermissions;
+import cn.parzulpan.shopping.product.entity.ProductAttrValueEntity;
+import cn.parzulpan.shopping.product.service.ProductAttrValueService;
 import cn.parzulpan.shopping.product.vo.AttrGroupRelationVo;
 import cn.parzulpan.shopping.product.vo.AttrRespVo;
 import cn.parzulpan.shopping.product.vo.AttrVo;
@@ -29,6 +32,32 @@ import cn.parzulpan.common.utils.R;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+
+    @Autowired
+    ProductAttrValueService productAttrValueService;
+
+    /**
+     * 修改商品规格
+     * /product/attr/update/{spuId}
+     */
+    @PostMapping("/update/{spuId}")
+    public R updateSpuAttr(@PathVariable Long spuId,
+                           @RequestBody List<ProductAttrValueEntity> entities) {
+        productAttrValueService.updateSpuAttr(spuId, entities);
+
+        return R.ok();
+    }
+
+    /**
+     * 获取 spu 规格
+     * /product/attr/base/listforspu/{spuId}
+     */
+    @GetMapping("/base/listforspu/{spuId}")
+    public R baseAttrListForSpu(@PathVariable("spuId") Long spuId) {
+        List<ProductAttrValueEntity> data = productAttrValueService.baseAttrListForSpu(spuId);
+
+        return R.ok().put("data", data);
+    }
 
     /**
      * 获取分类参数，根据参数不同，分为规格参数（base）和销售属性（sale）参数
