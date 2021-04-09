@@ -226,5 +226,19 @@
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.72" level="project" />
     <orderEntry type="library" name="Maven: cn.hutool:hutool-all:4.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.yaml:snakeyaml:1.25" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba.cloud:spring-cloud-starter-alicloud-oss:2.2.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba.cloud:spring-cloud-alicloud-oss:2.2.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba.cloud:spring-cloud-alicloud-context:2.2.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba.cloud:alicloud-context:1.0.5" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun.oss:aliyun-sdk-oss:${aliyun.oss.version}" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun.oss:aliyun-sdk-oss:3.8.0" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jettison:jettison:1.1" level="project" />
+    <orderEntry type="library" name="Maven: stax:stax-api:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:aliyun-java-sdk-core:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:aliyun-java-sdk-ram:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:aliyun-java-sdk-sts:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.aliyun:aliyun-java-sdk-ecs:4.2.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:2.0.1.Final" level="project" />
   </component>
 </module>

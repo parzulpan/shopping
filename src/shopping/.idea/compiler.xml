@@ -16,6 +16,7 @@
         <module name="shopping-order" />
         <module name="shopping-getway" />
         <module name="shopping-product" />
+        <module name="shopping-search" />
         <module name="renren-generator" />
       </profile>
     </annotationProcessing>
@@ -29,6 +30,7 @@
       <module name="shopping-member" target="1.8" />
       <module name="shopping-order" target="1.8" />
       <module name="shopping-product" target="1.8" />
+      <module name="shopping-search" target="1.8" />
       <module name="shopping-third-party" target="1.8" />
       <module name="shopping-ware" target="1.8" />
     </bytecodeTargetLevel>
@@ -42,6 +44,7 @@
       <module name="shopping-member" options="-parameters" />
       <module name="shopping-order" options="-parameters" />
       <module name="shopping-product" options="-parameters" />
+      <module name="shopping-search" options="-parameters" />
       <module name="shopping-third-party" options="-parameters" />
       <module name="shopping-ware" options="-parameters" />
     </option>
