@@ -1,11 +1,3 @@
-/*==============================================================*/
-/* database: 后台管理数据库                                          */
-/*==============================================================*/
-drop database if exists shopping_admin;
-create database shopping_admin character set utf8mb4 collate utf8mb4_general_ci;
-
-use shopping_admin;
-
 -- 菜单
 CREATE TABLE `sys_menu` (
   `menu_id` bigint NOT NULL AUTO_INCREMENT,
