@@ -73,7 +73,7 @@ class ShoppingSearchApplicationTests {
     void indexData() throws IOException {
         // 设置索引
         IndexRequest users = new IndexRequest("users");
-        users.id("1");
+        users.id("2");
 
         //设置要保存的内容，指定数据和类型
         // 方式一

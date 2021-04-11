@@ -1,20 +1,24 @@
 package cn.parzulpan.shopping.product.service.impl;
 
+import cn.parzulpan.common.constant.ProductConstant;
+import cn.parzulpan.common.to.SkuHasStockVo;
 import cn.parzulpan.common.to.SkuReductionTo;
 import cn.parzulpan.common.to.SpuBoundTo;
+import cn.parzulpan.common.to.es.SkuEsModel;
 import cn.parzulpan.common.utils.R;
 import cn.parzulpan.shopping.product.entity.*;
 import cn.parzulpan.shopping.product.feign.CouponFeignService;
+import cn.parzulpan.shopping.product.feign.SearchFeignService;
+import cn.parzulpan.shopping.product.feign.WareFeignService;
 import cn.parzulpan.shopping.product.service.*;
 import cn.parzulpan.shopping.product.vo.*;
+import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -53,7 +57,19 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
     SkuSaleAttrValueService skuSaleAttrValueService;
 
     @Autowired
+    BrandService brandService;
+
+    @Autowired
+    CategoryService categoryService;
+
+    @Autowired
     CouponFeignService couponFeignService;
+
+    @Autowired
+    WareFeignService wareFeignService;
+
+    @Autowired
+    SearchFeignService searchFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -231,6 +247,116 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void up(Long spuId) {
+        // 1. 查出当前 spuId 对应的所有 sku 信息
+        List<SkuInfoEntity> skus = skuInfoService.getSkusBySpuId(spuId);
+
+        // TODO 查询当前 SKU 的所有可以被检索规格属性
+        List<ProductAttrValueEntity> baseAttrs = productAttrValueService.baseAttrListForSpu(spuId);
+        List<Long> attrIds = baseAttrs.stream().map(ProductAttrValueEntity::getAttrId).collect(Collectors.toList());
+        List<Long> searchAttrIds = attrService.selectSearchAttrIds(attrIds);
+        Set<Long> idSet = new HashSet<>(searchAttrIds);
+        List<SkuEsModel.Attrs> collect = baseAttrs.stream().filter(item -> {
+            return idSet.contains(item.getAttrId());
+        }).map(item -> {
+            SkuEsModel.Attrs attrs1 = new SkuEsModel.Attrs();
+            BeanUtils.copyProperties(item, attrs1);
+            return attrs1;
+        }).collect(Collectors.toList());
+
+        // TODO 发送远程调用，库存服务查询是否有库存
+        Map<Long, Boolean> map = null;
+        try {
+            TypeReference<List<SkuHasStockVo>> typeReference = new TypeReference<List<SkuHasStockVo>>() {
+            };
+            List<Long> skuIds = skus.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
+            R r = wareFeignService.getSkusHasStock(skuIds);
+            // List<SkuHasStockVo> data = hasStock.getData();
+            // 转成 map，查询更快
+            map = r.getData(typeReference).stream().collect(Collectors.toMap(SkuHasStockVo::getSkuId, SkuHasStockVo::getHasStock));
+        } catch (Exception e) {
+            log.error("库存服务查询异常 {}", e);
+        }
+
+        // 2. 封装每个 sku 的信息
+        Map<Long, Boolean> finalMap = map;
+        List<SkuEsModel> upProducts = skus.stream().map(sku -> {
+            // 组装需要的数据
+            SkuEsModel skuEsModel = new SkuEsModel();
+            BeanUtils.copyProperties(sku, skuEsModel);
+            skuEsModel.setSkuPrice(sku.getPrice());
+            skuEsModel.setSkuImg(sku.getSkuDefaultImg());
+            // TODO 发送远程调用，库存服务查询是否有库存
+            if (finalMap == null) {
+                skuEsModel.setHasStock(true);
+            } else {
+                skuEsModel.setHasStock(finalMap.get(sku.getSkuId()));
+            }
+
+            // TODO 热度评分，这里先默认为 0
+            skuEsModel.setHotScore(0L);
+
+            // TODO 查询品牌和分类的名字信息
+            BrandEntity brand = brandService.getById(skuEsModel.getBrandId());
+            skuEsModel.setBrandName(brand.getName());
+            skuEsModel.setBrandImg(brand.getLogo());
+            CategoryEntity category = categoryService.getById(skuEsModel.getBrandId());
+            skuEsModel.setCatalogName(category.getName());
+
+            // 设置检索属性
+            skuEsModel.setAttrs(collect);
+
+            return  skuEsModel;
+
+        }).collect(Collectors.toList());
+
+        // TODO 将数据发送给 ES 进行保存
+        R r = searchFeignService.productStatusUp(upProducts);
+        if ( r.getCode() == 0 ) {
+            // 修改当前 spu 的状态
+            baseMapper.updateSpuStatus(spuId, ProductConstant.StatusEnum.SPU_UP.getCode());
+        } else {
+            // 远程调用失败
+            // TODO 重复调用问题？接口幂等性？重试机制？
+            // Feign 调用流程
+            /**
+             * 1. 构造请求数据，将对象转为 json
+             * 2. 发送请求并进行执行，执行成功会解码响应数据
+             * 3. 执行请求会有重试机制
+             *
+             * 源码：
+             *   @Override
+             *   public Object invoke(Object[] argv) throws Throwable {
+             *     RequestTemplate template = buildTemplateFromArgs.create(argv); // 1.
+             *     Options options = findOptions(argv);
+             *     Retryer retryer = this.retryer.clone();
+             *     while (true) {
+             *       try {
+             *         return executeAndDecode(template, options); // 2.
+             *       } catch (RetryableException e) {
+             *         try {
+             *           retryer.continueOrPropagate(e); // 3.
+             *         } catch (RetryableException th) {
+             *           Throwable cause = th.getCause();
+             *           if (propagationPolicy == UNWRAP && cause != null) {
+             *             throw cause;
+             *           } else {
+             *             throw th;
+             *           }
+             *         }
+             *         if (logLevel != Logger.Level.NONE) {
+             *           logger.logRetry(metadata.configKey(), logLevel);
+             *         }
+             *         continue;
+             *       }
+             *     }
+             *   }
+             */
+        }
+
     }
 
 }

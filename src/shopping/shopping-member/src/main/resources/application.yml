@@ -11,7 +11,7 @@ spring:
   application:
     name: shopping-member # 当前服务的名字
 mybatis-plus:
-  mapper-locations: classpath:/mapper/**/*:xml  # 配置映射文件地址
+  mapper-locations: classpath:/mapper/**/*.xml  # 配置映射文件地址
   global-config:
     db-config:
       id-type: auto # 配置主键自增

@@ -6,7 +6,7 @@ spring:
   application:
     name: shopping-search # 当前服务的名字
 server:
-  port: 18888
+  port: 12000
 
 # 开启 SQL 调试
 logging:

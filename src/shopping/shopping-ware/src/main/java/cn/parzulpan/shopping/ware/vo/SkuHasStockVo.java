@@ -10,12 +10,12 @@ import lombok.Data;
  * @package cn.parzulpan.shopping.ware.vo
  * @desc
  */
+
 @Data
-public class PurchaseDoneItemVo {
+public class SkuHasStockVo {
     /**
-     * items: [{itemId:1,status:4,reason:""}]//完成/失败的需求详情
+     * sku_id stock
      */
-    private Long itemId;
-    private Integer status;
-    private String reason;
+    private Long skuId;
+    private Boolean hasStock;
 }

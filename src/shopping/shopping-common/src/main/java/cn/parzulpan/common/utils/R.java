@@ -8,6 +8,8 @@
 
 package cn.parzulpan.common.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -17,10 +19,23 @@ import java.util.Map;
  * 返回数据
  *
  * @author Mark sunlightcs@gmail.com
+ *
  */
 public class R extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
-	
+
+	// 利用 fastjson 进行逆转
+	public <T> T getData(TypeReference<T> typeReference) {
+		Object data = get("data");
+		String s = JSON.toJSONString(data);
+		return JSON.parseObject(s, typeReference);
+	}
+
+	public R setData(Object data) {
+		put("data", data);
+		return this;
+	}
+
 	public R() {
 		put("code", 0);
 		put("msg", "success");

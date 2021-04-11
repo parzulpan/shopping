@@ -31,7 +31,8 @@
       <option name="IGNORE_JAVADOC_PERIOD" value="true" />
       <option name="IGNORE_DUPLICATED_THROWS" value="false" />
       <option name="IGNORE_POINT_TO_ITSELF" value="false" />
-      <option name="myAdditionalJavadocTags" value="date,email,RefreshScope：动态获取并刷新配置,Value(&quot;${配置项的名}&quot;)：获取到配置。,Author,Time,Desc,RequestBody,project,package,desc,website" />
+      <option name="myAdditionalJavadocTags" value="date,email,RefreshScope：动态获取并刷新配置,Value(&quot;${配置项的名}&quot;)：获取到配置。,Author,Time,Desc,RequestBody,project,package,desc,website,update" />
     </inspection_tool>
+    <inspection_tool class="SpringJavaInjectionPointsAutowiringInspection" enabled="false" level="ERROR" enabled_by_default="false" />
   </profile>
 </component>

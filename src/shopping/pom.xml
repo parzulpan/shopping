@@ -26,6 +26,7 @@
         <module>shopping-common</module>
         <module>shopping-getway</module>
         <module>shopping-third-party</module>
+        <module>shopping-search</module>
         <module>renren-fast</module>
         <module>renren-generator</module>
     </modules>
