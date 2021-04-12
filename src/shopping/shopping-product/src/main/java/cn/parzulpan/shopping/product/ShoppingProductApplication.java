@@ -55,6 +55,13 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *
  *   为了定义这些错误状态码，可以单独定义一个常量类，用来存储这些错误状态码
  *
+ * 6. 模板引擎
+ *   6.1 引入 thymeleaf 依赖，并配置关闭缓存属性
+ *   6.2 静态资源都放在 static 文件夹下，可以按照路径直接访问
+ *   6.3 页面放在 templates 文件夹下，可以直接访问
+ *   6.4 页面修改后不重启服务器实时更新：引入 dev-tools 依赖，修改完页面 ctrl+shift+f9 重新编译页面
+ *       但是更新了配置之类的，建议重启服务器
+ *
  * @author parzulpan
  */
 

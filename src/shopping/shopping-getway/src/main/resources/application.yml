@@ -59,6 +59,13 @@ spring:
             - Path=/api/**  # 前端项目 /api
           filters:
             - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment} # http://localhost:88/api/captcha.jpg => http://localhost:8080/renren-fast/captcha.jpg
+
+        - id: shopping_host_route
+          uri: lb://shopping-product
+          predicates:
+            - Host=**.shopping.parzulpan.cn, shopping.parzulpan.cn
+
+
   application:
     name: shopping-getway # 当前服务的名字
 server:

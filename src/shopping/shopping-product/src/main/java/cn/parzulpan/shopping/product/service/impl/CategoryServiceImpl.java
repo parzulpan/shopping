@@ -1,6 +1,7 @@
 package cn.parzulpan.shopping.product.service.impl;
 
 import cn.parzulpan.shopping.product.service.CategoryBrandRelationService;
+import cn.parzulpan.shopping.product.vo.Catelog2Vo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +87,49 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public void updateCascade(CategoryEntity category) {
         this.updateById(category);
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
+    }
+
+    @Override
+    public List<CategoryEntity> getLevel1Categorys() {
+        return baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
+    }
+
+    @Override
+    public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        // 1. 查出所有 1 级分类
+        List<CategoryEntity> level1Categorys = getLevel1Categorys();
+
+        // 2. 封装数据
+        Map<String, List<Catelog2Vo>> parentCid = level1Categorys.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // 2.1 查出每个 1 级分类的 2 级分类
+            List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>()
+                    .eq("parent_cid", v.getCatId()));
+            // 2.2 封装数据
+            List<Catelog2Vo> catelog2Vos = null;
+            if (categoryEntities != null) {
+                catelog2Vos = categoryEntities.stream().map(item -> {
+                    // 2.2.1 查出每个 2 级分类的 3 级分类
+                    List<CategoryEntity> categoryEntities1 = baseMapper.selectList(new QueryWrapper<CategoryEntity>()
+                            .eq("parent_cid", item.getCatId()));
+                    // 2.2.2 封装数据
+                    List<Catelog2Vo.Catelog3Vo> catelog3Vos = null;
+                    if (categoryEntities1 != null) {
+                        catelog3Vos =  categoryEntities1.stream().map(item1 -> {
+                            Catelog2Vo.Catelog3Vo catelog3Vo = new Catelog2Vo.Catelog3Vo(item.getCatId().toString(), item1.getCatId().toString(), item1.getName());
+
+                            return catelog3Vo;
+                        }).collect(Collectors.toList());
+                    }
+                    Catelog2Vo catelog2Vo = new Catelog2Vo(v.getCatId().toString(), catelog3Vos, item.getCatId().toString(), item.getName());
+
+                    return catelog2Vo;
+                }).collect(Collectors.toList());
+            }
+
+            return catelog2Vos;
+        }));
+
+        return parentCid;
     }
 
     // [225, 25, 2]

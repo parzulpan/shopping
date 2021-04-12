@@ -1,5 +1,6 @@
 package cn.parzulpan.shopping.product.service;
 
+import cn.parzulpan.shopping.product.vo.Catelog2Vo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.parzulpan.common.utils.PageUtils;
 import cn.parzulpan.shopping.product.entity.CategoryEntity;
@@ -31,5 +32,10 @@ public interface CategoryService extends IService<CategoryEntity> {
     Long[] findCatelogPath(Long catelogId);
 
     void updateCascade(CategoryEntity category);
+
+    List<CategoryEntity> getLevel1Categorys();
+
+    Map<String, List<Catelog2Vo>> getCatalogJson();
+
 }
 

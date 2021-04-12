@@ -13,6 +13,8 @@ spring:
     time-zone: Asia/Shanghai
   application:
     name: shopping-product # 当前服务的名字
+  thymeleaf:
+    cache: false # 关闭 thymeleaf 缓存，便于调试
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml  # 配置映射文件地址
   global-config:
