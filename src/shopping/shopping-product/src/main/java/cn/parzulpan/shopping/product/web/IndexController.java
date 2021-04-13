@@ -48,4 +48,13 @@ public class IndexController {
         Map<String, List<Catelog2Vo>> map = categoryService.getCatalogJson();
         return map;
     }
+
+    /**
+     * JMeter 压测 简单服务
+     */
+    @ResponseBody
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
 }

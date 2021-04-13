@@ -14,8 +14,8 @@
         <module name="shopping-common" />
         <module name="renren-fast" />
         <module name="shopping-order" />
-        <module name="shopping-getway" />
         <module name="shopping-product" />
+        <module name="shopping-gateway" />
         <module name="shopping-search" />
         <module name="renren-generator" />
       </profile>
@@ -26,7 +26,7 @@
       <module name="shopping" target="1.8" />
       <module name="shopping-common" target="1.8" />
       <module name="shopping-coupon" target="1.8" />
-      <module name="shopping-getway" target="1.8" />
+      <module name="shopping-gateway" target="1.8" />
       <module name="shopping-member" target="1.8" />
       <module name="shopping-order" target="1.8" />
       <module name="shopping-product" target="1.8" />
@@ -40,7 +40,7 @@
       <module name="renren-fast" options="-parameters" />
       <module name="renren-generator" options="-parameters" />
       <module name="shopping-coupon" options="-parameters" />
-      <module name="shopping-getway" options="-parameters" />
+      <module name="shopping-gateway" options="-parameters" />
       <module name="shopping-member" options="-parameters" />
       <module name="shopping-order" options="-parameters" />
       <module name="shopping-product" options="-parameters" />

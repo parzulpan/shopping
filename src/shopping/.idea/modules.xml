@@ -7,7 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/shopping.iml" filepath="$PROJECT_DIR$/shopping.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-common/shopping-common.iml" filepath="$PROJECT_DIR$/shopping-common/shopping-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-coupon/shopping-coupon.iml" filepath="$PROJECT_DIR$/shopping-coupon/shopping-coupon.iml" />
-      <module fileurl="file://$PROJECT_DIR$/shopping-getway/shopping-getway.iml" filepath="$PROJECT_DIR$/shopping-getway/shopping-getway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shopping-gateway/shopping-gateway.iml" filepath="$PROJECT_DIR$/shopping-gateway/shopping-gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-member/shopping-member.iml" filepath="$PROJECT_DIR$/shopping-member/shopping-member.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-order/shopping-order.iml" filepath="$PROJECT_DIR$/shopping-order/shopping-order.iml" />
       <module fileurl="file://$PROJECT_DIR$/shopping-product/shopping-product.iml" filepath="$PROJECT_DIR$/shopping-product/shopping-product.iml" />
