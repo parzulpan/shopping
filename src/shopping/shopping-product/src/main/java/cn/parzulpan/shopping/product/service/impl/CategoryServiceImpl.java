@@ -2,13 +2,16 @@ package cn.parzulpan.shopping.product.service.impl;
 
 import cn.parzulpan.shopping.product.service.CategoryBrandRelationService;
 import cn.parzulpan.shopping.product.vo.Catelog2Vo;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -21,6 +24,7 @@ import cn.parzulpan.shopping.product.dao.CategoryDao;
 import cn.parzulpan.shopping.product.entity.CategoryEntity;
 import cn.parzulpan.shopping.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 
 @Service("categoryService")
@@ -28,6 +32,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     CategoryBrandRelationService categoryBrandRelationService;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -80,7 +87,6 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 级联更新所有关联的数据
-     * @param category
      */
     @Transactional
     @Override
@@ -91,14 +97,185 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
-        long start = System.currentTimeMillis();
         List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
-        System.out.println("未为字段添加索引时，查询消耗时间：" + (System.currentTimeMillis() - start));
         return categoryEntities;
     }
 
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        // 使用 redis
+        /**
+         * 解决缓存失效：
+         * 1. 空结果缓存，并加入短暂过期时间：解决缓存穿透
+         * 2. 设置过期时间，并且为随机值：解决缓存雪崩
+         * 3. 加锁：解决缓存击穿
+         */
+        String catalogJSON = stringRedisTemplate.opsForValue().get("catalogJSON");
+        if (StringUtils.isEmpty(catalogJSON)) {
+            System.out.println("缓存不命中...查询数据库...");
+            Map<String, List<Catelog2Vo>> catalogJsonFromDb = getCatalogJsonFromDbWithRedisLockV5();
+            // 结果放入缓存也在锁中
+            return catalogJsonFromDb;
+        }
+        System.out.println("缓存命中...直接返回...");
+
+        return JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catelog2Vo>>>() {
+        });
+    }
+
+    /**
+     * 从数据库获取数据，使用 redis 的分布式锁 V1
+     * 问题：
+     *  1、setnx 占好了位，业务代码异常或者程序在页面过程中宕机。没有执行删除锁逻辑，这就造成了死锁
+     * 解决：
+     *  设置锁的自动过期，即使没有删除，会自动删除
+     */
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisLockV1() {
+        // Redis 命令：set lock 1 NX
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", "1");
+        if ( lock ) {
+            // 加锁成功，执行业务
+            Map<String, List<Catelog2Vo>> dataFromDb = getDataFromDb();
+            // 删除锁
+            stringRedisTemplate.delete("lock");
+            return dataFromDb;
+        } else {
+            // 加锁失败，重试
+            // 休眠 100ms 重试
+            // 自旋的方式
+            return getCatalogJsonFromDbWithRedisLockV1();
+        }
+    }
+
+    /**
+     * 从数据库获取数据，使用 redis 的分布式锁 V2
+     * 问题：
+     *  1、setnx 设置好，正要去设置过期时间，结果突然断电，服务宕机。又死锁了。
+     * 解决：
+     *  设置过期时间和占位必须是原子的。redis支持使用 setnx ex 命令。
+     */
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisLockV2() {
+        // Redis 命令：set lock 1 NX
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", "1");
+        if ( lock ) {
+            // 加锁成功，执行业务
+            // 设置过期时间
+            stringRedisTemplate.expire("lock", 30, TimeUnit.SECONDS);
+            Map<String, List<Catelog2Vo>> dataFromDb = getDataFromDb();
+            // 删除锁
+            stringRedisTemplate.delete("lock");
+            return dataFromDb;
+        } else {
+            // 加锁失败，重试
+            // 休眠 100ms 重试
+            // 自旋的方式
+            return getCatalogJsonFromDbWithRedisLockV2();
+        }
+    }
+
+    /**
+     * 从数据库获取数据，使用 redis 的分布式锁 V3
+     * 问题：
+     *  1、如果由于业务时间很长，锁自己过期了，我们直接删除，有可能把别人正在持有的锁删除了。
+     * 解决：
+     *  占锁的时候，值指定为 uuid，每个人匹配是自己的锁才删除。
+     */
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisLockV3() {
+        // Redis 命令：set lock 1 EX 30 NX
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", "1", 30, TimeUnit.SECONDS);
+        if ( lock ) {
+            // 加锁成功，执行业务
+            Map<String, List<Catelog2Vo>> dataFromDb = getDataFromDb();
+            // 删除锁
+            stringRedisTemplate.delete("lock");
+            return dataFromDb;
+        } else {
+            // 加锁失败，重试
+            // 休眠 100ms 重试
+            // 自旋的方式
+            return getCatalogJsonFromDbWithRedisLockV3();
+        }
+    }
+
+    /**
+     * 从数据库获取数据，使用 redis 的分布式锁 V4
+     * 问题：
+     *  1、如果正好判断是当前值，正要删除锁的时候，锁已经过期，别人已经设置到了新的值。那么我们删除的是别人的锁。
+     * 解决：
+     *  删除锁必须是原子性的。使用 redis+Lua脚本完成。
+     */
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisLockV4() {
+        // Redis 命令：set lock uuid EX 30 NX
+        String uuid = UUID.randomUUID().toString();
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", uuid, 30, TimeUnit.SECONDS);
+        if ( lock ) {
+            // 加锁成功，执行业务
+            Map<String, List<Catelog2Vo>> dataFromDb = getDataFromDb();
+            // 删除锁前先进行获取，判断是不是自己的锁编号 uuid，是的话再删除
+            String lockValue = stringRedisTemplate.opsForValue().get("lock");
+            if (uuid.equals(lockValue)) {
+                stringRedisTemplate.delete("lock");
+            }
+            return dataFromDb;
+        } else {
+            // 加锁失败，重试
+            // 休眠 100ms 重试
+            // 自旋的方式
+            return getCatalogJsonFromDbWithRedisLockV4();
+        }
+    }
+
+    /**
+     * 从数据库获取数据，使用 redis 的分布式锁 V5
+     * 问题：
+     *  1、锁的自动续期问题；
+     *  2、操作太麻烦，加锁解锁都需要自己完成，如果有很多锁则需要写很多重复的代码。
+     * 解决：
+     *  使用封装好的 redis 分布式锁工具类，例如 Redisson
+     */
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisLockV5() {
+        // Redis 命令：set lock uuid EX 30 NX
+        String uuid = UUID.randomUUID().toString();
+        Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent("lock", uuid, 30, TimeUnit.SECONDS);
+        if ( lock ) {
+            log.debug("获取分布式锁成功....");
+            Map<String, List<Catelog2Vo>> dataFromDb;
+            try {
+                //加锁成功，执行业务
+                dataFromDb = getDataFromDb();
+            } finally {
+                //删除锁前先进行获取，判断是不是自己的锁编号uuid，是的话再删除
+                //获取对比值+对比成功删除==原子操作  使用lua脚本解锁
+                String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+                //删除锁，删除成功返回 1，删除失败返回 0
+                Long lock1 = stringRedisTemplate.execute(new DefaultRedisScript<Long>(script, Long.class),
+                        Arrays.asList("lock"), uuid);
+            }
+            return dataFromDb;
+        } else {
+            log.debug("获取分布式锁失败，等待重试....");
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // 加锁失败，重试
+            // 休眠 100ms 重试
+            // 自旋的方式
+            return getCatalogJsonFromDbWithRedisLockV5();
+        }
+    }
+
+    private Map<String, List<Catelog2Vo>> getDataFromDb() {
+        // 得到锁以后，查询缓存，确认缓存数据
+        String catalogJSON = stringRedisTemplate.opsForValue().get("catalogJSON");
+        if (!StringUtils.isEmpty(catalogJSON)) {
+            // 缓存数据不为空，直接返回
+            return JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catelog2Vo>>>() {
+            });
+        }
+        System.out.println("查询了数据库...");
+
         // 将数据库的多次查询变为一次
         List<CategoryEntity> selectList = baseMapper.selectList(null);
 
@@ -118,7 +295,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                     // 2.2.2 封装数据
                     List<Catelog2Vo.Catelog3Vo> catelog3Vos = null;
                     if (categoryEntities1 != null) {
-                        catelog3Vos =  categoryEntities1.stream().map(item1 -> {
+                        catelog3Vos = categoryEntities1.stream().map(item1 -> {
                             Catelog2Vo.Catelog3Vo catelog3Vo = new Catelog2Vo.Catelog3Vo(item.getCatId().toString(), item1.getCatId().toString(), item1.getName());
 
                             return catelog3Vo;
@@ -133,7 +310,19 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
             return catelog2Vos;
         }));
 
+        // 结果放入缓存也在锁中
+        String s = JSON.toJSONString(parentCid);
+        stringRedisTemplate.opsForValue().set("catalogJSON", s);
+
         return parentCid;
+    }
+
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithLocalLock() {
+        // 演示本地锁：synchronized，JUC（ReentrantLock）等，它存在的问题是只能锁住当前进程，不适用分布式场景
+        synchronized (this) {
+            // 得到锁以后，查询缓存，确认缓存数据
+            return getDataFromDb();
+        }
     }
 
     private List<CategoryEntity> getParentCid(List<CategoryEntity> selectList, Long parentCid) {
@@ -169,7 +358,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
                     (menu2.getSort() == null ? 0 : menu2.getSort());
         }).collect(Collectors.toList());
 
-        return  entities;
+        return entities;
     }
 
 }

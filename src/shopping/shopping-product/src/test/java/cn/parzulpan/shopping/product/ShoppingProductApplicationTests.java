@@ -8,9 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @SpringBootTest
@@ -21,6 +24,9 @@ class ShoppingProductApplicationTests {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @Test
     void contextLoads() {
@@ -55,5 +61,13 @@ class ShoppingProductApplicationTests {
     void testBrandList() {
         List<BrandEntity> list = brandService.list(new QueryWrapper<BrandEntity>().eq("brand_id", 1L));
         list.forEach(System.out::println);
+    }
+
+    @Test
+    void testRedis() {
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set("hello", "word"+ UUID.randomUUID().toString());
+        String hello = ops.get("hello");
+        System.out.println(hello);
     }
 }
