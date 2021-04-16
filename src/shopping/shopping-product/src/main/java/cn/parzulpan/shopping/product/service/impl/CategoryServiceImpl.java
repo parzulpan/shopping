@@ -4,7 +4,12 @@ import cn.parzulpan.shopping.product.service.CategoryBrandRelationService;
 import cn.parzulpan.shopping.product.vo.Catelog2Vo;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -35,6 +40,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    RedissonClient redissonClient;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -87,7 +95,14 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     /**
      * 级联更新所有关联的数据
+     * 使用 缓存数据一致性的失效模式
+     *     @CacheEvict(value = {"category"},key = "'getLevel1Categorys'")
+     *     @Caching(evict = {
+     *             @CacheEvict(value = {"category"},key = "'getLevel1Categorys'"),
+     *             @CacheEvict(value = {"category"},key = "'getCatalogJson'")
+     *     })
      */
+    @CacheEvict(value = {"category"}, allEntries = true)
     @Transactional
     @Override
     public void updateCascade(CategoryEntity category) {
@@ -95,14 +110,30 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         categoryBrandRelationService.updateCategory(category.getCatId(), category.getName());
     }
 
+    @Cacheable(value = {"category"}, key = "#root.method.name")
     @Override
     public List<CategoryEntity> getLevel1Categorys() {
         List<CategoryEntity> categoryEntities = baseMapper.selectList(new QueryWrapper<CategoryEntity>().eq("parent_cid", 0));
         return categoryEntities;
     }
 
+    /**
+     * SpringCache 能解决读模式下的缓存穿透和缓存雪崩问题，但是对于缓存击穿没有很好的解决方法。
+     * 缓存击穿的解决方法之一就是加锁，但是 SpringCache 的加锁只有在读模式下有本地锁，
+     * 所以这个得分场景来确定，对于常规数据 SpringCache 完全够用了，对于一致性要求高的数据还是得使用分布式锁
+     */
+    @Cacheable(value = {"category"}, key = "#root.methodName", sync = true)
     @Override
     public Map<String, List<Catelog2Vo>> getCatalogJson() {
+        // Redisson 可重入锁（Reentrant Lock）
+        RLock lock = redissonClient.getLock("getCatalogJson-lock");
+        lock.lock(10, TimeUnit.SECONDS);
+        Map<String, List<Catelog2Vo>> dataFromDb = getDataFromDbWithoutCache();
+        lock.unlock();
+        return dataFromDb;
+    }
+
+    public Map<String, List<Catelog2Vo>> getCatalogJsonOld() {
         // 使用 redis
         /**
          * 解决缓存失效：
@@ -112,15 +143,24 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
          */
         String catalogJSON = stringRedisTemplate.opsForValue().get("catalogJSON");
         if (StringUtils.isEmpty(catalogJSON)) {
-            System.out.println("缓存不命中...查询数据库...");
-            Map<String, List<Catelog2Vo>> catalogJsonFromDb = getCatalogJsonFromDbWithRedisLockV5();
+            Map<String, List<Catelog2Vo>> catalogJsonFromDb = getCatalogJsonFromDbWithRedisson();
             // 结果放入缓存也在锁中
             return catalogJsonFromDb;
         }
-        System.out.println("缓存命中...直接返回...");
 
         return JSON.parseObject(catalogJSON, new TypeReference<Map<String, List<Catelog2Vo>>>() {
         });
+    }
+
+    /**
+     * Redisson 可重入锁（Reentrant Lock）
+     */
+    public Map<String, List<Catelog2Vo>> getCatalogJsonFromDbWithRedisson() {
+        RLock lock = redissonClient.getLock("getCatalogJsonFromDbWithRedisson-lock");
+        lock.lock(10, TimeUnit.SECONDS);
+        Map<String, List<Catelog2Vo>> dataFromDb = getDataFromDb();
+        lock.unlock();
+        return dataFromDb;
     }
 
     /**
@@ -313,6 +353,43 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         // 结果放入缓存也在锁中
         String s = JSON.toJSONString(parentCid);
         stringRedisTemplate.opsForValue().set("catalogJSON", s);
+
+        return parentCid;
+    }
+    private Map<String, List<Catelog2Vo>> getDataFromDbWithoutCache() {
+        // 将数据库的多次查询变为一次
+        List<CategoryEntity> selectList = baseMapper.selectList(null);
+
+        // 1. 查出所有 1 级分类
+        List<CategoryEntity> level1Categorys = getParentCid(selectList, 0L);
+
+        // 2. 封装数据
+        Map<String, List<Catelog2Vo>> parentCid = level1Categorys.stream().collect(Collectors.toMap(k -> k.getCatId().toString(), v -> {
+            // 2.1 查出每个 1 级分类的 2 级分类
+            List<CategoryEntity> categoryEntities = getParentCid(selectList, v.getCatId());
+            // 2.2 封装数据
+            List<Catelog2Vo> catelog2Vos = null;
+            if (categoryEntities != null) {
+                catelog2Vos = categoryEntities.stream().map(item -> {
+                    // 2.2.1 查出每个 2 级分类的 3 级分类
+                    List<CategoryEntity> categoryEntities1 = getParentCid(selectList, item.getCatId());
+                    // 2.2.2 封装数据
+                    List<Catelog2Vo.Catelog3Vo> catelog3Vos = null;
+                    if (categoryEntities1 != null) {
+                        catelog3Vos = categoryEntities1.stream().map(item1 -> {
+                            Catelog2Vo.Catelog3Vo catelog3Vo = new Catelog2Vo.Catelog3Vo(item.getCatId().toString(), item1.getCatId().toString(), item1.getName());
+
+                            return catelog3Vo;
+                        }).collect(Collectors.toList());
+                    }
+                    Catelog2Vo catelog2Vo = new Catelog2Vo(v.getCatId().toString(), catelog3Vos, item.getCatId().toString(), item.getName());
+
+                    return catelog2Vo;
+                }).collect(Collectors.toList());
+            }
+
+            return catelog2Vos;
+        }));
 
         return parentCid;
     }

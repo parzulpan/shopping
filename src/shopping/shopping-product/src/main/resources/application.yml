@@ -18,6 +18,13 @@ spring:
   redis:
     host: 192.168.56.56
     port: 6379
+  cache:
+    type: redis # 使用 Redis 作为缓存组件
+    redis:
+      time-to-live: 3600000 # 设置缓存存活时间 1h
+      use-key-prefix: true # 设置是否启用缓存前缀，默认是true，并且不指定缓存的前缀，默认使用缓存的名字作为前缀，
+                           # 这样的好处是：存储同一类型的数据，都可以指定成同一个分区，使用 allEntries=true 可以直接删除某个分区下的所有数据
+      cache-null-values: true # 是否缓存空值，设置为 true 可以防止缓存穿透
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml  # 配置映射文件地址
   global-config:
