@@ -24,27 +24,23 @@ import java.util.List;
  *                 "analyzer": "ik_smart"  # 中文分词器
  *             },
  *             "skuPrice": { "type": "keyword" },  # 保证精度问题
- *             "skuImg"  : { "type": "keyword", "index": false, "doc_values": false },
+ *             "skuImg"  : { "type": "keyword" },
  *             "saleCount":{ "type":"long" },
  *             "hasStock": { "type": "boolean" },
  *             "hotScore": { "type": "long"  },
  *             "brandId":  { "type": "long" },
  *             "catalogId": { "type": "long"  },
- *             "brandName": { "type": "keyword", "index": false, "doc_values": false },
+ *             "brandName": { "type": "keyword" },
  *             "brandImg":{
  *                 "type": "keyword",
- *                 "index": false,  # 不可被检索，不生成index，只用做页面使用
- *                 "doc_values": false # 不可被聚合，默认为true
  *             },
- *             "catalogName": { "type": "keyword", "index": false, "doc_values": false },
+ *             "catalogName": { "type": "keyword" },
  *             "attrs": {
  *                 "type": "nested", # 防止扁平化处理
  *                 "properties": {
  *                     "attrId": { "type": "long" },
  *                     "attrName": {
  *                         "type": "keyword",
- *                         "index": false,
- *                         "doc_values": false
  *                     },
  *                     "attrValue": { "type": "keyword" }
  *                 }

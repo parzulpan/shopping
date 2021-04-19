@@ -1,0 +1,133 @@
+# GET /shopping_product/_search
+{
+  "query": {
+    "bool": {
+      "must": [ # 检索出华为
+        {
+          "match": {
+            "skuTitle": "华为"
+          }
+        }
+      ],
+      "filter": [ # 过滤
+        {
+          "term": {
+            "catalogId": "225"
+          }
+        },
+        {
+          "terms": {
+            "brandId": [
+              "2"
+            ]
+          }
+        },
+        {
+          "term": {
+            "hasStock": "false"
+          }
+        },
+        {
+          "range": { # 价格区间
+            "skuPrice": {
+              "gte": 1000,
+              "lte": 7000
+            }
+          }
+        },
+        {
+          "nested": { # 内嵌属性
+            "path": "attrs", # 聚合名字
+            "query": {
+              "bool": {
+                "must": [
+                  {
+                    "term": {
+                      "attrs.attrId": {
+                        "value": "6"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "skuPrice": {
+        "order": "desc"
+      }
+    }
+  ],
+  "from": 0,
+  "size": 5,
+  "highlight": { # 高亮的字段
+    "fields": {
+      "skuTitle": {
+      }
+    },
+    "pre_tags": "<b style='color:red'>", # 前缀
+    "post_tags": "</b>" # 后缀
+  },
+  "aggs": { # 查询完后的聚合
+    "brandAgg": {
+      "terms": {
+        "field": "brandId",
+        "size": 10
+      },
+      "aggs": { # 子聚合
+        "brandNameAgg": {
+          "terms": {
+            "field": "brandName",
+            "size": 10
+          }
+        },
+        "brandImgAgg": {
+          "terms": {
+            "field": "brandImg",
+            "size": 10
+          }
+        }
+      }
+    },
+    "catalogAgg": {
+      "terms": {
+        "field": "catalogId",
+        "size": 10
+      },
+      "aggs": {
+        "catalogNameAgg": {
+          "terms": {
+            "field": "catalogName",
+            "size": 10
+          }
+        }
+      }
+    },
+    "attrs": {
+      "nested": {
+        "path": "attrs"
+      },
+      "aggs": {
+        "attrIdAgg": {
+          "terms": {
+            "field": "attrs.attrId",
+            "size": 10
+          },
+          "aggs": {
+            "attrNameAgg": {
+              "terms": {
+                "field": "attrs.attrName",
+                "size": 10
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

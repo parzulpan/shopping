@@ -22,25 +22,25 @@ import java.util.List;
 
 @Data
 public class SearchParam {
-    /**全文匹配关键字*/
+    /**全文检索匹配关键字*/
     private String keyword;
     
     /**三级分类 Id*/
     private Long catalog3Id;
     
-    /**排序条件*/
+    /**排序条件 *_asc/desc*/
     private String sort;
     
-    /**是否仅显示有货*/
+    /**过滤条件 是否仅显示有货 0/1*/
     private Integer hasStock;
     
-    /**价格区间*/
+    /**过滤条件 价格区间 1_500/_500/500_*/
     private String skuPrice;
     
-    /**品牌 Id，可多选*/
+    /**过滤条件 品牌 Id，可多选*/
     private List<Long> brandId;
     
-    /**按照属性进行筛选*/
+    /**过滤条件 按照属性进行筛选*/
     private List<String> attrs;
     
     /**页码*/

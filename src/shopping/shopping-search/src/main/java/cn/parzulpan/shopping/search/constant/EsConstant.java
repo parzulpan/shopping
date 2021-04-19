@@ -13,5 +13,15 @@ public class EsConstant {
     /**
      * SKU 数据在 ES 中的 索引
      */
-    public static final String PRODUCT_INDEX = "product";
+    public static final String PRODUCT_INDEX = "shopping_product";
+
+    /**
+     * 分页数量
+     */
+    public static final Integer PRODUCT_PAGE_SIZE = 16;
+
+    /**
+     *
+     */
+    public static final String SEARCH_LINK = "http://search.shopping.parzulpan.cn/list.html";
 }

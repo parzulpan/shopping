@@ -1,6 +1,7 @@
 package cn.parzulpan.shopping.search.service;
 
 import cn.parzulpan.shopping.search.vo.SearchParam;
+import cn.parzulpan.shopping.search.vo.SearchResult;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Service;
 public interface ShoppingSearchService {
     /**
      * 根据条件检索
-     * @param searchParam 检索得所有参数
-     * @return 返回得结果
+     * @param searchParam 检索的所有参数
+     * @return 返回的结果
      */
-    Object search(SearchParam searchParam);
+    SearchResult search(SearchParam searchParam);
 }
