@@ -303,7 +303,7 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
             BrandEntity brand = brandService.getById(skuEsModel.getBrandId());
             skuEsModel.setBrandName(brand.getName());
             skuEsModel.setBrandImg(brand.getLogo());
-            CategoryEntity category = categoryService.getById(skuEsModel.getBrandId());
+            CategoryEntity category = categoryService.getById(skuEsModel.getCatalogId());
             skuEsModel.setCatalogName(category.getName());
 
             // 设置检索属性

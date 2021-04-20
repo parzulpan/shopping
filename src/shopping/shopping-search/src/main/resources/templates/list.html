@@ -402,8 +402,8 @@
         <a href="http://shopping.parzulpan.cn"><img src="/static/search/./image/logo1.jpg" alt=""></a>
     </div>
     <div class="header_form">
-        <input type="text" placeholder="手机"/>
-        <a href="/static/search/#">搜索</a>
+        <input id="keyword_input" type="text" placeholder="手机" th:value="${param.keyword}"/>
+        <a href="javascript:searchByKeyword()">搜索</a>
     </div>
     <div class="header_ico">
         <div class="header_gw">
@@ -753,17 +753,7 @@
         </div>
         <i><img src="/static/search/image/right-@1x.png" alt=""></i>
         <div class="JD_ipone_one c">
-            <a href="/static/search/#" class="qqq">手机 <img src="/static/search/image/down-@1x.png" alt=""></a>
-            <div>
-                <a href="/static/search/#">手机</a>
-                <a href="/static/search/#">老人机</a>
-                <a href="/static/search/#">对讲机</a>
-                <a href="/static/search/#">女性手机</a>
-                <a href="/static/search/#">超续航手机</a>
-                <a href="/static/search/#">全面屏手机</a>
-                <a href="/static/search/#">拍照手机</a>
-                <a href="/static/search/#">游戏手机</a>
-            </div>
+            <a th:each="nav:${result.navs}" th:href="${nav.link}"><span th:text="${nav.name}"></span>：<span th:text="${nav.navValue}"></span> x</a>
         </div>
         <i><img src="/static/search/image/right-@1x.png" alt=""></i>
     </div>
@@ -821,7 +811,8 @@
                     </div>
                     <div class="sl_value">
                         <ul>
-                            <li><a th:href="${'javascript:searchProducts(&quot;catalog3Id&quot;,'+catalog.catalogId+')'}"
+                            <li>
+                                <a th:href="${'javascript:searchProducts(&quot;catalog3Id&quot;,'+catalog.catalogId+')'}"
                                    th:text="${catalog.getCatalogName()}"></a></li>
                         </ul>
                     </div>
@@ -1053,19 +1044,39 @@
                 <div class="filter">
                     <!--综合排序-->
                     <div class="filter_top">
-                        <div class="filter_top_left">
-                            <a href="/static/search/#">综合排序</a>
-                            <a href="/static/search/#">销量</a>
-                            <a href="/static/search/#">价格</a>
-                            <a href="/static/search/#">评论分</a>
-                            <a href="/static/search/#">上架时间</a>
+                        <div class="filter_top_left" th:with="p=${param.sort}, priceRange=${param.skuPrice}">
+                            <!-- 通过判断当前class是否有desc来进行样式的渲染和箭头的显示-->
+                            <a sort="hotScore"
+                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p, 'hotScore') && #strings.endsWith(p, 'desc')) ? 'sort_a desc' : 'sort_a'}"
+                               th:attr="style=${(#strings.isEmpty(p) || #strings.startsWith(p, 'hotScore')) ? 'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
+                                综合排序 [[${(!#strings.isEmpty(p) && #strings.startsWith(p, 'hotScore') && #strings.endsWith(p,'desc')) ?'↓':'↑' }]]</a>
+                            <a sort="saleCount"
+                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p, 'saleCount') && #strings.endsWith(p, 'desc')) ? 'sort_a desc' : 'sort_a'}"
+                               th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p, 'saleCount')) ? 'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
+                                销量 [[${(!#strings.isEmpty(p) && #strings.startsWith(p, 'saleCount') && #strings.endsWith(p,'desc')) ?'↓':'↑' }]]</a>
+                            <a sort="skuPrice"
+                               th:class="${(!#strings.isEmpty(p) && #strings.startsWith(p, 'skuPrice') && #strings.endsWith(p, 'desc')) ? 'sort_a desc' : 'sort_a'}"
+                               th:attr="style=${(!#strings.isEmpty(p) && #strings.startsWith(p, 'skuPrice')) ? 'color: #fff; border-color: #e4393c; background: #e4393c;':'color: #333; border-color: #ccc; background: #fff;' }">
+                                价格 [[${(!#strings.isEmpty(p) && #strings.startsWith(p, 'skuPrice') && #strings.endsWith(p,'desc')) ?'↓':'↑' }]]</a>
+                            <a sort="hotScore" class="sort_a">评论分</a>
+                            <a sort="hotScore" class="sort_a">上架时间</a>
+                            <!--价格区间搜索-->
+                            <input id="skuPriceFrom" type="number"
+                                   th:value="${#strings.isEmpty(priceRange) ? '' : #strings.substringBefore(priceRange, '_')}"
+                                   style="width: 100px; margin-left: 30px">
+                            <input id="skuPriceTo" type="number"
+                                   th:value="${#strings.isEmpty(priceRange) ? '' : #strings.substringAfter(priceRange, '_')}"
+                                   style="width: 100px">
+                            <button id="skuPriceSearchBtn">确定</button>
+
                         </div>
                         <div class="filter_top_right">
                             <span class="fp-text">
-                               <b>1</b><em>/</em><i>169</i>
-                           </span>
-                            <a href="/static/search/#" class="prev"><</a>
-                            <a href="/static/search/#" class="next"> > </a>
+                                <i> 共 [[${result.total}]] 件商品，</i>
+                                <b>[[${result.pageNum}]]</b><em> / </em><i>[[${result.totalPages}]]</i>
+                            </span>
+                            <a href="#" class="page_a" th:if="${result.pageNum > 1}" th:attr="pn=${result.getPageNum() - 1}"> < </a>
+                            <a href="#" class="page_a" th:if="${result.pageNum < result.totalPages}" th:attr="pn=${result.getPageNum() + 1}"> > </a>
                         </div>
                     </div>
                     <!--收货地址-->
@@ -1167,8 +1178,8 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/static/search/#">
-                                        <i></i>
+                                    <a href="#" th:with="checked=${param.hasStock}">
+                                        <input id="showHasStock" type="checkbox" th:checked="${#strings.equals(checked, '1')}">
                                         仅显示有货
                                     </a>
                                 </li>
@@ -1235,24 +1246,27 @@
                     <div class="filter_page">
                         <div class="page_wrap">
                             <span class="page_span1">
-                                <a href="/static/search/#">
+                                <!-- 不是第一页时显示上一页 -->
+                                <a class="page_a" href="#" th:if="${result.pageNum > 1}"
+                                   th:attr="pn=${result.getPageNum() - 1}">
                                     < 上一页
                                 </a>
-                                <a href="/static/search/#" style="border: 0;color:#ee2222;background: #fff">1</a>
-                                <a href="/static/search/#">2</a>
-                                <a href="/static/search/#">3</a>
-                                <a href="/static/search/#"
-                                   style="border: 0;font-size: 20px;color: #999;background: #fff">...</a>
-                                <a href="/static/search/#">169</a>
-                                <a href="/static/search/#">
+                                <!-- 将各个页码遍历显示，并将当前页码绑定至属性 pn -->
+                                <a class="page_a" href="#"
+                                   th:style="${page==result.pageNum?'border: 0;color:#ee2222;background: #fff':''}"
+                                   th:each="page : ${result.pageNavs}" th:text="${page}" th:attr="pn=${page}">1
+                                </a>
+                                <!-- 不是最后一页时显示下一页 -->
+                                <a class="page_a" href="#" th:if="${result.pageNum < result.totalPages}"
+                                   th:attr="pn=${result.getPageNum() + 1}">
                                     下一页 >
                                 </a>
                             </span>
                             <span class="page_span2">
-                                <em>共<b>169</b>页&nbsp;&nbsp;到第</em>
-                                <input type="number" value="1">
+                                <em>共<b th:text="${result.totalPages}">169</b>页&nbsp;&nbsp;到第</em>
+                                <input type="number" value="1" class="page_input">
                                 <em>页</em>
-                                <a href="/static/search/#">确定</a>
+                                <a href="#">确定</a>
                             </span>
                         </div>
                     </div>
@@ -2003,7 +2017,7 @@
 
     // 点击筛选条件
     function searchProducts(name, value) {
-        location.href = replaceParamVal(location.href, name, value, true)
+        location.href = replaceParamVal(location.href, name, value, false)
     }
 
     function replaceParamVal(url, paramName, replaceVal, forceAdd) {
@@ -2017,7 +2031,7 @@
                     nUrl = oUrl + "?" + paramName + "=" + replaceVal;
                 }
             } else {
-                let re = eval('/(' + paramName + '=)([^&]*/gi)');
+                let re = eval('/(' + paramName + '=)([^&]*)/gi');
                 nUrl = oUrl.replace(re, paramName + '=' + replaceVal);
             }
         } else {
@@ -2030,6 +2044,43 @@
 
         return nUrl;
     }
+
+    function searchByKeyword() {
+        searchProducts("keyword", $("#keyword_input").val())
+    }
+
+    $(".page_a").click(function () {
+        let pn = $(this).attr("pn");
+        location.href = replaceParamVal(location.href, "pageNum", pn, false);
+    })
+
+    $(".sort_a").click(function () {
+        // 添加、剔除 desc
+        $(this).toggleClass("desc");
+        // 获取 sort 属性值并进行 url 跳转
+        let sort = $(this).attr("sort");
+        sort = $(this).hasClass("desc") ? sort + "_desc" : sort + "_asc";
+        location.href = replaceParamVal(location.href, "sort", sort, false);
+        return false;
+    })
+
+    $("#skuPriceSearchBtn").click(function () {
+        let skuPriceFrom = $("#skuPriceFrom").val();
+        let skuPriceTo = $("#skuPriceTo").val();
+        location.href = replaceParamVal(location.href, "skuPrice", skuPriceFrom + "_" + skuPriceTo, false)
+    })
+
+    $("#showHasStock").change(function () {
+        if ($(this).prop('checked')) {
+            location.href = replaceParamVal(location.href, "hasStock", '1', false)
+        } else {
+            let re = eval('/([&])(hasStock=)([^&]*)/gi');
+            location.href = (location.href).replace(re, '');
+        }
+
+        return false;
+    })
+
 
 </script>
 </body>

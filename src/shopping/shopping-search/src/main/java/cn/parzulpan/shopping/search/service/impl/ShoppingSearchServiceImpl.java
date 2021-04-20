@@ -6,9 +6,11 @@ import cn.parzulpan.shopping.search.config.ShoppingElasticsearchConfig;
 import cn.parzulpan.shopping.search.constant.EsConstant;
 import cn.parzulpan.shopping.search.feign.ProductFeignService;
 import cn.parzulpan.shopping.search.service.ShoppingSearchService;
+import cn.parzulpan.shopping.search.vo.AttrResponseVo;
 import cn.parzulpan.shopping.search.vo.SearchParam;
 import cn.parzulpan.shopping.search.vo.SearchResult;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.search.join.ScoreMode;
@@ -199,11 +201,14 @@ public class ShoppingSearchServiceImpl implements ShoppingSearchService {
                 SearchResult.NavVo navVo = new SearchResult.NavVo();
                 // 6.1 name
                 try {
-                    R info = productFeignService.info(Long.parseLong(split[0]));
+                    R info = productFeignService.attrInfo(Long.parseLong(split[0]));
                     if (info.getCode() == 0) {
-                        ;
+                        // AttrResponseVo data = JSON.parseObject(JSON.toJSONString(info.get("attr")), new TypeReference<AttrResponseVo>() {});
+                        AttrResponseVo data = info.getData("attr", new TypeReference<AttrResponseVo>() {});
+                        navVo.setName(data.getAttrName());
                     }
                 } catch (Exception e) {
+                    navVo.setName(split[0]);
                     log.error("远程调用商品服务查询属性失败", e);
                 }
 
@@ -220,6 +225,8 @@ public class ShoppingSearchServiceImpl implements ShoppingSearchService {
             }).collect(Collectors.toList());
             searchResult.setNavs(navVos);
         }
+
+        // 7. TODO 条件筛选联动
 
         return searchResult;
     }
