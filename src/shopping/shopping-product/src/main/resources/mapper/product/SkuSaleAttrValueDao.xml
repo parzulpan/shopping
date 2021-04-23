@@ -13,5 +13,25 @@
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
 
+    <resultMap id="skuItemSaleAttrVo" type="cn.parzulpan.shopping.product.vo.SkuItemSaleAttrVo">
+        <result column="attr_id" property="attrId"/>
+        <result column="attr_name" property="attrName"/>
+        <collection property="attrValues" ofType="cn.parzulpan.shopping.product.vo.AttrValueWithSkuIdVo">
+            <result column="attr_value" property="attrValue"/>
+            <result column="sku_ids" property="skuIds"/>
+        </collection>
+    </resultMap>
+
+    <select id="getSaleAttrBySpuId" resultMap="skuItemSaleAttrVo">
+        select pssav.attr_id as attr_id,
+               pssav.attr_name as attr_name,
+               pssav.attr_value as attr_value,
+               group_concat(distinct psi.sku_id) as sku_ids
+        from shopping_pms.pms_sku_info psi
+        left join shopping_pms.pms_sku_sale_attr_value pssav on psi.sku_id = pssav.sku_id
+        where psi.spu_id = #{spuId}
+        group by pssav.attr_id, pssav.attr_name, pssav.attr_value;
+    </select>
+
 
 </mapper>

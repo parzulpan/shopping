@@ -1,5 +1,6 @@
 package cn.parzulpan.shopping.product.service;
 
+import cn.parzulpan.shopping.product.vo.SkuItemVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.parzulpan.common.utils.PageUtils;
 import cn.parzulpan.shopping.product.entity.SkuInfoEntity;
@@ -23,5 +24,7 @@ public interface SkuInfoService extends IService<SkuInfoEntity> {
     PageUtils queryPageByCondition(Map<String, Object> params);
 
     List<SkuInfoEntity> getSkusBySpuId(Long spuId);
+
+    SkuItemVo item(Long skuId);
 }
 

@@ -1,10 +1,8 @@
 package cn.parzulpan.shopping.search.thread;
 
+import java.util.Random;
 import java.util.concurrent.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 import static org.checkerframework.checker.units.UnitsTools.s;
 
@@ -28,8 +26,13 @@ public class CompletableFutureTest {
 //        thenApplyT();
 //        thenAcceptT();
 //        thenRunT();
-        thenCombineT();
-
+//        thenCombineT();
+//        thenAcceptBothT();
+//        thenComposeT();
+//        applyToEitherT();
+//        acceptEitherT();
+//        runAfterBothT();
+        runAfterEitherT();
 
         System.out.println("end...");
         threadPoolExecutor.shutdown();
@@ -173,6 +176,9 @@ public class CompletableFutureTest {
         }, threadPoolExecutor);
     }
 
+    /**
+     * thenCombine 示例
+     */
     public static void thenCombineT() throws ExecutionException, InterruptedException {
         CompletableFuture<String> future1 = CompletableFuture.supplyAsync(new Supplier<String>() {
 
@@ -198,4 +204,225 @@ public class CompletableFutureTest {
         System.out.println(result.get());
     }
 
+    /**
+     * thenAcceptBoth 示例
+     */
+    public static void thenAcceptBothT() {
+        CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f1 = " + t);
+                return t;
+            }
+        });
+        CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f2 = " + t);
+                return t;
+            }
+        });
+        future1.thenAcceptBoth(future2, new BiConsumer<Integer, Integer>() {
+            @Override
+            public void accept(Integer integer, Integer integer2) {
+                System.out.println("f1 = " + integer +" , f2 = " + integer2);
+            }
+        });
+
+    }
+
+    /**
+     * thenCompose 示例
+     */
+    public static void thenComposeT() throws ExecutionException, InterruptedException {
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                System.out.println("t1 = " + t);
+                return t;
+            }
+        }).thenCompose(new Function<Integer, CompletionStage<Integer>>() {
+            @Override
+            public CompletionStage<Integer> apply(Integer integer) {
+                return CompletableFuture.supplyAsync(new Supplier<Integer>() {
+                    @Override
+                    public Integer get() {
+                        int t = integer * 2;
+                        System.out.println("t2 = " + t);
+                        return t;
+                    }
+                });
+            }
+        });
+
+        System.out.println("result: " + future.get());
+    }
+
+    /**
+     * applyToEither 示例
+     */
+    public static void applyToEitherT() throws ExecutionException, InterruptedException {
+        CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f1 = " + t);
+                return t;
+            }
+        });
+        CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f2 = " + t);
+                return t;
+            }
+        });
+        CompletableFuture<Integer> result = future1.applyToEither(future2, new Function<Integer, Integer>() {
+            @Override
+            public Integer apply(Integer integer) {
+                System.out.println(integer);
+                return integer * 2;
+            }
+        });
+
+        System.out.println(result.get());
+    }
+
+    /**
+     * acceptEither 示例
+     */
+    public static void acceptEitherT() {
+        CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f1 = " + t);
+                return t;
+            }
+        });
+        CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f2 = " + t);
+                return t;
+            }
+        });
+        future1.acceptEither(future2, new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) {
+                System.out.println(integer);
+            }
+        });
+    }
+
+    /**
+     * runAfterBoth 示例
+     */
+    public static void runAfterBothT() {
+        CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f1 = " + t);
+                return t;
+            }
+        });
+        CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f2 = " + t);
+                return t;
+            }
+        });
+        future1.runAfterBoth(future2, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("future1 和 future2 都执行完成了...");
+            }
+        });
+    }
+
+    /**
+     * runAfterEither 示例
+     */
+    public static void runAfterEitherT() {
+        CompletableFuture<Integer> future1 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f1 = " + t);
+                return t;
+            }
+        });
+        CompletableFuture<Integer> future2 = CompletableFuture.supplyAsync(new Supplier<Integer>() {
+            @Override
+            public Integer get() {
+                int t = new Random().nextInt(3);
+                try {
+                    TimeUnit.SECONDS.sleep(t);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("f2 = " + t);
+                return t;
+            }
+        });
+        future1.runAfterEither(future2, new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("future1 或 future2 执行完成了...");
+            }
+        });
+    }
 }

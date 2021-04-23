@@ -1,6 +1,10 @@
 package cn.parzulpan.shopping.product.service.impl;
 
+import cn.parzulpan.shopping.product.vo.SkuItemSaleAttrVo;
+import cn.parzulpan.shopping.product.vo.SkuItemVo;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +28,11 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<SkuItemSaleAttrVo> getSaleAttrBySpuId(Long spuId) {
+        return this.baseMapper.getSaleAttrBySpuId(spuId);
     }
 
 }

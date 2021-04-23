@@ -3,6 +3,8 @@ package cn.parzulpan.shopping.product.service.impl;
 import cn.parzulpan.shopping.product.entity.AttrEntity;
 import cn.parzulpan.shopping.product.service.AttrService;
 import cn.parzulpan.shopping.product.vo.AttrGroupWithAttrsVo;
+import cn.parzulpan.shopping.product.vo.SkuItemVo;
+import cn.parzulpan.shopping.product.vo.SpuItemAttrGroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,5 +79,12 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
         }).collect(Collectors.toList());
 
         return collect;
+    }
+
+    @Override
+    public List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId) {
+
+        List<SpuItemAttrGroupVo> groupAttrs = this.baseMapper.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
+        return groupAttrs;
     }
 }

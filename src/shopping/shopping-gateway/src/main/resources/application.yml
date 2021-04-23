@@ -63,7 +63,7 @@ spring:
         - id: shopping_host_route
           uri: lb://shopping-product
           predicates:
-            - Host=shopping.parzulpan.cn
+            - Host=shopping.parzulpan.cn, item.shopping.parzulpan.cn
 
         - id: shopping_host_route
           uri: lb://shopping-search

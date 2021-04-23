@@ -1,5 +1,6 @@
 package cn.parzulpan.shopping.product;
 
+import cn.parzulpan.shopping.product.dao.AttrGroupDao;
 import cn.parzulpan.shopping.product.entity.BrandEntity;
 import cn.parzulpan.shopping.product.service.BrandService;
 import cn.parzulpan.shopping.product.service.CategoryService;
@@ -32,9 +33,17 @@ class ShoppingProductApplicationTests {
     @Autowired
     RedissonClient redissonClient;
 
+    @Autowired
+    AttrGroupDao attrGroupDao;
+
     @Test
     void contextLoads() {
 
+    }
+
+    @Test
+    void testGetAttrGroupWithAttrsBySpuId() {
+        System.out.println(attrGroupDao.getAttrGroupWithAttrsBySpuId(13L, 225L));
     }
 
     @Test

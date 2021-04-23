@@ -1,6 +1,8 @@
 package cn.parzulpan.shopping.product.service;
 
 import cn.parzulpan.shopping.product.vo.AttrGroupWithAttrsVo;
+import cn.parzulpan.shopping.product.vo.SkuItemVo;
+import cn.parzulpan.shopping.product.vo.SpuItemAttrGroupVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import cn.parzulpan.common.utils.PageUtils;
 import cn.parzulpan.shopping.product.entity.AttrGroupEntity;
@@ -22,5 +24,7 @@ public interface AttrGroupService extends IService<AttrGroupEntity> {
     PageUtils queryPage(Map<String, Object> params, Long catelogId);
 
     List<AttrGroupWithAttrsVo> getAttrGroupWithAttrsByCatelogId(Long catelogId);
+
+    List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(Long spuId, Long catalogId);
 }
 
