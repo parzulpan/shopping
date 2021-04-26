@@ -1258,10 +1258,25 @@
 	<script src="/static/item/js/js.js" type="text/javascript" charset="utf-8"></script>
 
 	<script>
-		${".sku_attr_value"}.click(function () {
+		$(".sku_attr_value").click(function () {
 			// 获取所有加了 checked 的属性
+			let skus = new Array();
+			$(this).addClass("clicked");
+			let curr = $(this).attr("skus").split(",");
+			skus.push(curr)
+			$(this).parent().parent().find(".sku_attr_value").removeClass("checked");
+			$("a[class='sku_attr_value checked']").each(function () {
+				skus.push($(this).attr("skus").split(","));
+			});
 			// 取它们的交集，得到 skuId
-			console.log("124145");
+			let filterEle = skus[0];
+			for (let i = 1; i < skus.length; ++i) {
+				filterEle = $(filterEle).filter(skus[i]);
+			}
+			if (filterEle[0]) {
+				location.href = "http://item.shopping.parzulpan.cn/" + filterEle[0] + ".html";
+			}
+
 		});
 		$(function () {
 			$(".sku_attr_value").parent().css({"border": "solid 1px #CCC"});

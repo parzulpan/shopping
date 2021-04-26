@@ -39,3 +39,10 @@ server:
 logging:
   level:
     cn.parzulpan.shopping: debug
+
+# 线程池相关配置
+shopping:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10
