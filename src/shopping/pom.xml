@@ -27,6 +27,7 @@
         <module>shopping-gateway</module>
         <module>shopping-third-party</module>
         <module>shopping-search</module>
+        <module>shopping-auth-server</module>
         <module>renren-fast</module>
         <module>renren-generator</module>
     </modules>
