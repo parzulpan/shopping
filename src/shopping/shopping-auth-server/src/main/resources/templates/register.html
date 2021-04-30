@@ -5005,7 +5005,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 			<div class="desc">欢迎注册</div>
 			<div class="dfg">
 				<span>已有账号？</span>
-				<a href="/static/register/">请登录</a>
+				<a href="http://auth.shopping.parzulpan.cn/login.html">请登录</a>
 			</div>
 		</header>
 		<section>
@@ -5037,7 +5037,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 				<div class="register-box">
 					<label for="username" class="other_label">
 			<span>中国 0086∨</span>
-			<input class="phone" maxlength="20" type="text" placeholder="建议使用常用手机">
+			<input class="phone" id="phoneNumber" maxlength="20" type="text" placeholder="建议使用常用手机">
 			</label>
 					<div class="tips">
 
@@ -5047,10 +5047,7 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 					<label for="username" class="other_label">验 证 码
 			<input maxlength="20" type="text" placeholder="请输入验证码" class="caa">
 			</label>
-					<span id="code"></span>
-					<div class="tips">
-
-					</div>
+					<a id="sendCode"> 发送验证码 </a>
 				</div>
 				<div class="arguement">
 					<input type="checkbox" id="xieyi"> 阅读并同意
@@ -5302,6 +5299,49 @@ Cookie</span>是由网页服务器存放在您的访问设备上的文本文件�
 			$(".cuo").click(function() {
 				$(".zong").hide();
 			});
+
+			$(function () {
+				$("#sendCode").click(function () {
+					if ($(this).hasClass("disabled")) {
+
+					} else {
+						$.get("/sms/sendcode?phone=" + $("#phoneNum").val(), function (data) {
+							if (data.code != 0) {
+								layer.msg(data.msg)
+							}
+						});
+						// 1.给指定手机号发送验证码
+						$.get("/sms/sendCode?phoneNumber="+$("phoneNumber").val(), function (data) {
+							if (data.code != 0) {
+								alert(data.msg);
+							}
+						});
+						// 2.进入倒计时效果
+						timeoutChangeStyle()
+
+
+					}
+				})
+			})
+
+			// 外部变量计时
+			let num = 60;
+
+			function timeoutChangeStyle() {
+				$("#sendCode").attr("class", "disabled")
+				if (num == 0) {//可以再次发送
+					num = 60;
+					$("#sendCode").attr("class", "");//取消disabled
+					$("#sendCode").text("发送验证码");
+				} else {
+					var str = num + "s 后再次发送";
+					$("#sendCode").text(str);
+					// 1s后回调
+					setTimeout("timeoutChangeStyle()", 1000);
+				}
+				num--
+			}
+
 		</script>
 	</body>
 

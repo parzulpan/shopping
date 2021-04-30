@@ -5,6 +5,9 @@ spring:
         server-addr: 127.0.0.1:8848 # nacos 注册中心的服务地址
   application:
     name: shopping-auth-server # 当前服务的名字
+  redis:
+    host: 192.168.56.56
+    port: 6379
   thymeleaf:
     cache: false
 server:

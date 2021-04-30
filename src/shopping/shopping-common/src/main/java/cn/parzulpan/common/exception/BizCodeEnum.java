@@ -28,7 +28,9 @@ public enum BizCodeEnum {
     // 参数格式校验失败
     VALID_EXCEPTION(10001, "参数格式校验失败"),
     // 商品上架异常
-    PRODUCT_UP_EXCEPTION(11000, "商品上架异常");
+    PRODUCT_UP_EXCEPTION(11000, "商品上架异常"),
+    // 短信服务发送验证码异常
+    SMS_SEND_CODE_EXCEPTION(10002, "验证码获取频率太快，请稍后再试");
 
     private final int code;
     private final String msg;
